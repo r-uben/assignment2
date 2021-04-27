@@ -1,0 +1,22 @@
+## Ignore .pdf files
+*.pdf
+
+## Ignore .aux files 
+*.aux
+
+## Ignore .log files
+*.log
+
+## Ignore .out files
+*.out 
+
+## Ignore synctex.gz files
+*.synctex.gz
+
+
+## Ignore .xcodeproj/
+FiniteDifferenceMethods.xcodeproj/
+
+ComputationalFinance.xcodeproj/
+
+.DS_store

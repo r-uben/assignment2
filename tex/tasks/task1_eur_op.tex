@@ -1,0 +1,81 @@
+	
+\noindent We are told to derive the boundary condition 
+%%% BOUNDARY CONDITIONS: ASSUMPTION FOR THE SOLUTION OF THE PDE 
+\begin{equation}\label{boundary_condition}
+	V(S, t) = S A(t) + B(t) \doublequad \text{ as } S\to \infty,
+\end{equation}
+for some functions $A$ and $B$ which solve the approximate problem
+%%% THE PDE 
+\begin{equation}\label{pde}
+	\partial_t V + \kappa (X - S) \ \partial_S V - rV + C \exp{-\alpha t} = 0.
+\end{equation}
+
+Our assumption is that the solution for (\ref{pde}) is of the form of (\ref{boundary_condition}). Hence, we must firstly note~that
+\begin{equation}\label{derivatives}
+	\partial_t V (S, t) = S A'(t) + B'(t), \doublequad \text{ and } \doublequad \partial_S V = A(t),
+\end{equation}
+to further substitute (\ref{derivatives}) in (\ref{pde}) and get
+\begin{equation}\label{calc1}
+	\begin{aligned}
+		S A'(t) + B'(t) + \kappa (X - S) A(t) - r \left[ S A(t) + B(t)\right] + C\exp{-\alpha t} = 0.
+	\end{aligned}
+\end{equation}
+Since the solution is of the form (\ref{boundary_condition}), we may arrange (\ref{calc1}) into something of the same form, that is,
+\begin{equation}\label{calc2}
+	\begin{aligned}
+		S \left[A'(t) - (\kappa + r) A(t) \right] + \left[ B'(t) + \kappa X A(t) - rB(t) + C\exp{-\alpha t}\right] = 0,
+	\end{aligned}
+\end{equation}
+which is equivalent to solve
+\begin{equation}
+	\begin{cases}
+		A'(t) &=  (\kappa + r) A(t) \\
+		B'(t) &= rB(t)  - f(t) \\
+	\end{cases},
+\end{equation}
+where $f(t) = \kappa X A(t) + C\exp{-\alpha t}$.
+
+The first equation gives us that $A(t) = C_A \exp{(\kappa + r) t} = A_T \exp{-(\kappa + r)(T-t)}$, with 
+$
+A_T \overset{\text{\tiny def}}{=} A(T),
+$ 
+whilst the second gives us that $B$ is of the form $B(t) = C(t) \exp{-r (T-t)}$, where $C(t)$ is to be derived. Differentiating $B(t)$ and rearranging terms we get
+%%% ODE FOR THE "CONSTANT" MULTIPLYING B
+\begin{equation}
+	C'(t) = - \exp{r(T-t)}f(t), 
+\end{equation}
+with $  B_T \overset{\text{\tiny def}}{=} B(T)$, i.e.,
+\begin{align*}
+		C(t) 	&= B_T + \int_t^T \exp{-rs}f(s)\d s\\
+				&= B_T + \int_t^T \exp{-rs}\left[\kappa X A(s) + C\exp{-\alpha s}\right]\d s\\
+				&= B_T + \int_t^T \left[\kappa XC_A \exp{(\kappa + r) s} \exp{-rs} + C\exp{-(r+\alpha)s}\right]\d s\\
+				&= B_T + \int_t^T \left[\kappa XC_A \exp{\kappa s} + C\exp{-(r+\alpha)s}\right]\d s\\
+				&= B_T + {X C_A} \left[\exp{\kappa T} - \exp{\kappa t}\right] - \frac{C}{r+\alpha}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\\
+				&= B_T + {X A_T\exp{-rT}} \left[1 -  \exp{\kappa (T-t)}\right]- \frac{C}{r+\alpha}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right] ;
+\end{align*}
+
+In order to find $A_T$ and $B_T$, we know that $V(S, T) = RS$ when $S\to\infty$. According to (\ref{boundary_condition}), this is equivalent to set $A(T) = R$ and $B(T) = 0$. From $A(T) = R$, we get by definition that $A_T = R$; and, from $B(T) = 0$, simply that $B_T = 0$. Therefore,
+\begin{equation}
+	B(t) = {X R\exp{-rT}} \left[1 -  \exp{\kappa (T-t)}\right]- \frac{C}{r+\alpha}\exp{-(r-\alpha)T}\left[1-\exp{(r+\alpha)(T-t)}\right]
+\end{equation}
+
+Finally,
+\begin{equation}\label{boundary_formula}
+	V(S,t) = SR  \ \exp{-(\kappa + r)(T-t)} +  X R \ \exp{-rT} \left[1 -  \exp{\kappa (T-t)}\right]- \frac{C}{r+\alpha}\ \exp{-(r-\alpha)T}\left[1-\exp{(r+\alpha)(T-t)}\right]
+\end{equation}
+
+%$$
+%		 \frac{C}{r+\alpha} \exp{-\alpha t}  -  {X R} \exp{-[\kappa +r] \cdot [T-t]} + \left[ {X R \exp{-[\kappa+r]T}}- \frac{C}{r+\alpha} + B_T\right]\exp{rt} = 0
+%$$
+%i.e., 
+%$$
+%	{X R} \exp{-[\kappa +r] \cdot [T-t]} - 	\frac{C}{r+\alpha} \exp{-\alpha t}= \left[ {X R \exp{-[\kappa+r]T}}- \frac{C}{r+\alpha} + B_T\right]\exp{rt}
+%$$
+%and therefore
+%\begin{equation}\label{B0}
+%	\begin{aligned}
+%		B_T& = {X R} \exp{-[\kappa +r]T + \kappa t} - 	\frac{C}{r+\alpha} \exp{-(\alpha + r) t} - {X R \exp{-[\kappa+r]T}}+ \frac{C}{r+\alpha}\\
+%		&= {X R} \exp{-[\kappa +r]T }\left[\exp{\kappa t} - 1\right] - 	\frac{C}{r+\alpha}\left[\exp{-(\alpha + r) t}-1\right]
+%	\end{aligned}
+%\end{equation}
+%Using (\ref{B0}) in (\ref{Bt}), we obtain
