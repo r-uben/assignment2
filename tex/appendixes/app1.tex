@@ -1,0 +1,52 @@
+We are asked to find a numerical solution for the following PDE
+\begin{equation}\label{PDE}
+	\partial_t V + \frac{1}{2}\sigma^2 S^{2\beta} \partial_{SS}V + \kappa(\theta(t) - S)\partial_S V - rV + C \exp{-\alpha t} = 0.
+\end{equation}
+
+Here we present a derivation of the numerical approximation formul\ae. To do so, firstly recall the formula for an approximation for $V$
+\begin{equation}
+		V \approx \frac{1}{2}\left(V_{i,j} + V_{i+1,j}\right),
+\end{equation}
+and the formul\ae for the approximations of the partial derivatives: firstly with respect to $t$
+\begin{equation}\label{partial_wrt_t}
+	\partial_t V \approx \frac{V_{i+1,j} - V_{i,j}}{\Delta t};
+\end{equation}
+and secondly, with respect to $S$, the first derivative
+\begin{equation}\label{first_wrt_S}
+	\partial_S V 	\approx \frac{1}{4\Delta S}\left(V_{i,j+1} - V_{i,j-1} + V_{i+1,j+1} - V_{i+1,j-1}\right),
+\end{equation}
+and the second derivative
+\begin{equation}\label{second_wrt_S}
+	\partial_{SS} V	\approx \frac{1}{2\Delta S^2}\left(V_{i,j+1} - 2V_{i,j } + V_{i,j-1}+ V_{i+1,j+1}-2V_{i+1,j} + V_{i+1,j-1}\right)
+\end{equation}
+By substituting there approximation into (\ref{PDE}), then
+$$
+	\begin{aligned}
+		0 	&= \frac{V_{i+1,j} - V_{i,j}}{\Delta t} \\
+			&+ \frac{1}{2}\sigma^2 S^{2\beta} \frac{1}{2\Delta S^2}\left(V_{i,j+1} - 2V_{i,j } + V_{i,j-1}+ V_{i+1,j+1}-2V_{i+1,j} + V_{i+1,j-1}\right) \\
+			&+ \kappa(\theta(\Delta t) - S)\frac{1}{4\Delta S}\left(V_{i,j+1} - V_{i,j-1} + V_{i+1,j+1} - V_{i+1,j-1}\right) \\
+			&- r\frac{1}{2}\left(V_{i,j} + V_{i+1,j}\right) + C \exp{-\alpha \Delta t}.
+	\end{aligned}
+$$
+Rearranging terms
+$$
+	\begin{aligned}
+		&\phantom{+} \left(-\frac{1}{4}\sigma^2j^2S^{2(\beta -1)}+ \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right)V_{i,j-1} \\
+		&+ \left(\frac{1}{\Delta t} + \frac{r}{2} + \frac{1}{2}\sigma^2 \left(\Delta S\right)^{2(\beta - 1)} \right)V_{i,j} \\
+		&+ \left( -\frac{1}{4}\sigma^2j^2S^{2(\beta -1)} - \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right) V_{i, j+1}\\
+		&= \left(\frac{1}{4}\sigma^2 j^2S^{2(\beta - 1)} - \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j-1}\\
+		&+ \left(\frac{1}{\Delta t } - \frac{1}{2}\sigma^2 j^2S^{2(\beta - 1)}  - \frac{r}{2}\right)V_{i+1,j}\\
+		&+ \left(\frac{1}{4}\sigma^2 j^2S^{2(\beta - 1)}+ \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j+1} + C \exp{-\alpha \Delta t}.
+	\end{aligned}
+$$
+and hence
+\begin{equation}
+	\begin{aligned}
+		a(j) &= -\frac{1}{4}\sigma^2j^2S^{2(\beta -1) }+ \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right] \\
+		b(j) &= \frac{1}{\Delta t} + \frac{r}{2} + \frac{1}{2}\sigma^2 j^2S^{2(\beta - 1)}\\
+		c(j) &=  -\frac{1}{4}\sigma^2j^2S^{2(\beta -1) } - \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\\
+		d(i,j)&=\left(\frac{1}{4}\sigma^2 j^2S^{2(\beta - 1)} - \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j-1}\\
+		&+ \left(\frac{1}{\Delta t } - \frac{1}{2}\sigma^2 j^2S^{2(\beta - 1)}  - \frac{r}{2}\right)V_{i+1,j}\\
+		&+ \left(\frac{1}{4}\sigma^2 j^2S^{2(\beta - 1)}+ \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j+1} + C \exp{-\alpha \Delta t}.
+	\end{aligned}
+\end{equation}

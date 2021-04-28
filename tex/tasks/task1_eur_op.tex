@@ -35,35 +35,45 @@ which is equivalent to solve
 	\end{equation}
 where $f(t) = \kappa X A(t) + C\exp{-\alpha t}$.
 
-The first equation gives us that $A(t) = C_A \exp{(\kappa + r) t} = A_T \exp{-(\kappa + r)(T-t)}$, with 
+The first equation gives us that $A(t) = A_T \exp{-(\kappa + r)(T-t)}$, with 
 $
-A_T \overset{\text{\tiny def}}{=} A(T),
+A_T \overset{\text{\tiny def}}{=} A(T) \to R,
 $ 
-whilst the second gives us that $B$ is of the form $B(t) = C(t) \exp{-r (T-t)}$, where $C(t)$ is to be derived. Differentiating $B(t)$ and rearranging terms we get
+as $S\to\infty$. Hence, 
+\begin{equation}
+	A(t) = R\exp{-(\kappa + r)(T-t)}
+\end{equation} 
+
+On the other hand, second equation gives us that $B$ is of the form $B(t) = C(t) \exp{-r (T-t)}$, $C(T) = B(T)$, where $C(t)$ is to be derived. Differentiating $B(t)$ and rearranging terms we get
 %%% ODE FOR THE "CONSTANT" MULTIPLYING B
 	\begin{equation}
 		C'(t) = - \exp{r(T-t)}f(t), 
 	\end{equation}
-with $  B_T \overset{\text{\tiny def}}{=} B(T)$, i.e.,
+with $  B_T \overset{\text{\tiny def}}{=} B(T) $, which is zero for large $S$, i.e.,
 	$$
 		\begin{aligned}
-			  C(t) 	&= B_T + \int_t^T \exp{-rs}f(s)\d s\\
-					&= B_T + \int_t^T \exp{-rs}\left[\kappa X A(s) + C\exp{-\alpha s}\right]\d s\\
-					&= B_T + \int_t^T \left[\kappa XC_A \exp{(\kappa + r) s} \exp{-rs} + C\exp{-(r+\alpha)s}\right]\d s\\
-					&= B_T + \int_t^T \left[\kappa XC_A \exp{\kappa s} + C\exp{-(r+\alpha)s}\right]\d s\\
-					&= B_T + {X C_A} \left[\exp{\kappa T} - \exp{\kappa t}\right] - \frac{C}{r+\alpha}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\\
-					&= B_T + {X A_T\exp{-rT}} \left[1 -  \exp{\kappa (T-t)}\right]- \frac{C}{r+\alpha}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right] ;
+			  C(t) 	&= B_T + \int_t^T \exp{r(T-s)}f(s)\d s\\
+					&= B_T + \int_t^T \exp{r(T-s)}\left[\kappa X A(s) + C\exp{-\alpha s}\right]\d s\\
+					&= B_T + \int_t^T \left[\kappa X R \exp{- (\kappa + r) (T-s)} \exp{r(T-s)} + C\exp{-(r+\alpha)s+rT}\right]\d s\\
+					&= B_T + \int_t^T \left[\kappa X R \exp{-\kappa (T-s)} + C\exp{-(r+\alpha)s +rT}\right]\d s\\
+					&= B_T + {X R \exp{-\kappa T}}  \left[\exp{\kappa T} - \exp{\kappa t}\right] - \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\\
+					&= B_T + {X R}  \left[1 -  \exp{-\kappa(T-t)}\right]- \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right] ;
 		\end{aligned}
 	$$
 
-In order to find $A_T$ and $B_T$, we know that $V(S, T) = RS$ when $S\to\infty$. According to (\ref{boundary_condition}), this is equivalent to set $A(T) = R$ and $B(T) = 0$. From $A(T) = R$, we get by definition that $A_T = R$; and, from $B(T) = 0$, simply that $B_T = 0$. Therefore,
+Therefore, for $S$ sufficiently large we obtain,
 	%%% B(t) 
 	\begin{equation}
-		B(t) = {X R\exp{-rT}} \left[1 -  \exp{\kappa (T-t)}\right]- \frac{C}{r+\alpha}\exp{-(r-\alpha)T}\left[1-\exp{(r+\alpha)(T-t)}\right]
+		\begin{aligned}
+			B(t) 	&= \left({X R}  \left[1 -  \exp{-\kappa(T-t)}\right]- \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\right) \exp{-r(T-t)}\\
+					&= {X R\exp{-r(T-t)}} \left[1 -  \exp{- \kappa (T-t)}\right]- \frac{C}{r+\alpha}\exp{rt}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\\
+					&= {2X R}\exp{-\left(r+\frac{\kappa}{2}\right)(T-t)}\sinh\left(\frac{\kappa}{2}[T-t]\right)- \frac{C}{r+\alpha}\exp{rt}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]
+		\end{aligned}
 	\end{equation}
 
 Finally,
 	%%% VALUE FUNCTION WHEN S TENDS TO INFINITY
 	\begin{equation}\label{boundary_formula}
-		V(S,t) = SR  \ \exp{-(\kappa + r)(T-t)} +  X R \ \exp{-rT} \left[1 -  \exp{\kappa (T-t)}\right]- \frac{C}{r+\alpha}\ \exp{-(r-\alpha)T}\left[1-\exp{(r+\alpha)(T-t)}\right]
+		V(S,t) = SR  \ \exp{-\kappa_r(T-t)} +  {2X R}\exp{-\frac{1}{2}\left(r-\kappa_r\right)(T-t)}\sinh \frac{\kappa}{2}(T-t)- \frac{C}{\alpha_r}\exp{rt}\left[\exp{-\alpha_r T}-\exp{-\alpha_r t}\right],
 	\end{equation}
+	where $\kappa_r \defi \kappa + r$, and $\alpha_r \defi  \alpha + r.$
