@@ -156,7 +156,7 @@ CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
               break;
             }
             if(sor==iterMax)
-                PRINT_DATA_LINE("NOT CONVERGED")
+                PRINT_DATA_LINE("NOT CONVERGED");
         }
         // Set old=new
         vOld = vNew;
@@ -167,8 +167,8 @@ CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
     // output the estimated option price
     //ofstream output;
     // OpenCSVFile(&output, "eurConvBondValues", NOT_OVER_WRITE);
-    OUT_DATA_LINE_3(*output <<, m_F, m_S0, optionValue);
-    PRINT_2DATA_LINE(m_S0, optionValue)
+    DATA_LINE(output, m_F, m_S0, optionValue);
+    PRINT_DATA_LINE(m_S0, optionValue);
 }
 
 
@@ -180,12 +180,14 @@ CN::aFunc(double t, int j)
     double second_term  =  0.25 * m_kappa * ( theta(t) / m_dS - j);
     return first_term + second_term;
 }
+
 double
 CN::bFunc(double t, int j)
 {
     double long_term = 0.5 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2.*(m_beta-1.));
     return 1. / m_dt + 0.5 * m_r  + long_term;
 }
+
 double
 CN::cFunc(double t, int j)
 {
@@ -193,6 +195,7 @@ CN::cFunc(double t, int j)
     double second_term  = -0.25 * m_kappa * ( theta(t) / m_dS - j);
     return first_term + second_term;
 }
+
 double
 CN::dFunc(double t, int j, vector<double> &v)
 {
@@ -202,6 +205,8 @@ CN::dFunc(double t, int j, vector<double> &v)
     double d =  - ( a * v[j-1] + (b - 2 / m_dt) * v[j] + c * v[j+1] ) + m_C * exp(-m_alpha * t);
     return d;
 }
+
+
 // LU COEFFICIENTS
 double
 CN::betaFunc(double t, int j, double prevBeta)

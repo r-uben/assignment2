@@ -9,36 +9,42 @@
 #include <fstream>
 using namespace std;
 
-#define COMMA               << ", " <<
+#define COMMA               << ", "
 #define START_LINE          cout <<
 #define END_LINE            << endl;
 
-// CONSOLE
-#define PRINT_DATA_LINE(a)              START_LINE (a) END_LINE
-#define PRINT_2DATA_LINE(a,b)           START_LINE (a) COMMA (b) END_LINE
-#define PRINT_3DATA_LINE(a,b,c)         START_LINE (a) COMMA (b) COMMA (c) END_LINE
-#define PRINT_4DATA_LINE(a,b,c,d)       START_LINE (a) COMMA (b) COMMA (c) COMMA (d) END_LINE
-#define PRINT_5DATA_LINE(a,b,c,d,e)     START_LINE (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) END_LINE
-#define PRINT_6DATA_LINE(a,b,c,d,e,f)   START_LINE (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) END_LINE
-#define PRINT_7DATA_LINE(a,b,c,d,e,f,g) START_LINE (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) END_LINE
+/// CONSOLE
+// RECURSION FOR PRINTING RESULTS IN THE CONSOLE: WE FIRSTLY DECLARE THE "LAST STATE" IN THE
+// RECURSION, I.E., WHEN THERE'S ONLY ONE ARGUMENT LEFT TO PRINTING.
+// THE SECOND TEMPLATE DOES THE REST.
 
-// CSV
-#define OUT                                                     output <<
-#define OUT_DATA_LINE_2(out, a, b)                              out (a) COMMA (b) END_LINE
-#define OUT_DATA_LINE_3(out, a, b, c)                           out (a) COMMA (b) COMMA (c) END_LINE
-#define DATA_LINE_2(a, b)                                       OUT_DATA_LINE_2(OUT, a, b)
-#define DATA_LINE_3(a, b, c)                                    OUT_DATA_LINE_3(OUT, a, b, c)
-#define DATA_LINE_4(a, b, c, d)                                 OUT (a) COMMA (b) COMMA (c) COMMA (d) END_LINE
-#define DATA_LINE_5(a, b, c, d, e)                              OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) END_LINE
-#define DATA_LINE_6(a, b, c, d, e, f)                           OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) END_LINE
-#define DATA_LINE_7(a, b, c, d, e, f, g)                        OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) END_LINE
-#define DATA_LINE_8(a, b, c, d, e, f, g, h)                     OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) COMMA (h) END_LINE
-#define DATA_LINE_9(a, b, c, d, e, f, g, h, i)                  OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) COMMA (h) COMMA (i) END_LINE
-#define DATA_LINE_10(a, b, c, d, e, f, g, h, i, j)              OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) COMMA (h) COMMA (i) COMMA (j) END_LINE
-#define DATA_LINE_11(a, b, c, d, e, f, g, h, i, j, k)           OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) COMMA (h) COMMA (i) COMMA (j) COMMA (k) END_LINE
-#define DATA_LINE_12(a, b, c, d, e, f, g, h, i, j, k, l)        OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) COMMA (h) COMMA (i) COMMA (j) COMMA (k) COMMA (l) END_LINE
-#define DATA_LINE_13(a, b, c, d, e, f, g, h, i, j, k, l, m)     OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) COMMA (g) COMMA (h) COMMA (i) COMMA (j) COMMA (k) COMMA (l) COMMA (m) END_LINE
+template<typename T>                    // Type is resolved in compile time
+void PRINT_DATA_LINE(T t)
+{
+    START_LINE t END_LINE;
+}
 
+template<typename T, typename... ARGS>
+void PRINT_DATA_LINE(T t, ARGS... args) // Take the first arguments
+{
+    START_LINE t COMMA;
+    PRINT_DATA_LINE(args...);                 // Recursion with a fewer argument
+}
+
+/// CSV
+// (SAME PROCEDURE THAN BEFORE)
+template<typename T>
+void DATA_LINE(ofstream *output, T t)
+{
+    *output << t << endl;
+}
+
+template<typename T, typename... ARGS>
+void DATA_LINE(ofstream *output, T t, ARGS... args)
+{
+    *output << t << ", ";
+    DATA_LINE(output, args...);
+}
 
 // TEX
 
@@ -69,3 +75,5 @@ void OpenCSVFile(ofstream *output, string name, bool over_write){
         throw;
     }
 }
+
+
