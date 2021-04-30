@@ -31,7 +31,7 @@
 #include <fstream>
 using namespace std;
 
-/// First theclare the parameters for the problem, local grid and variables and the vectors required
+/// First declare the parameters for the problem, local grid and variables and the vectors required
 /// In option pricing problems, we must for S over the semi infinite domain, therefore numerically we need to choose an appropiate Smax
 /// The first five parameters are intrinsice option parameters, whilst the last three ones are those appropriate parameters for the method.
 
@@ -58,7 +58,7 @@ CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double 
     m_jStar = m_S0/m_dS;
 }
 void
-CN::convertibleBond(bool lu, double tol, double omega)
+CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
 {
     vector <double> vOld(m_J+1), vNew(m_J+1);
     // Setup and initialise the stock price
@@ -165,9 +165,9 @@ CN::convertibleBond(bool lu, double tol, double omega)
     // output the estimated option price
     double optionValue = approxPrice(vNew, S);
     // output the estimated option price
-    ofstream output;
-    OpenCSVFile(&output, "eurConvBondValues", NOT_OVER_WRITE);
-    DATA_LINE_3(m_F, m_S0, optionValue);
+    //ofstream output;
+    // OpenCSVFile(&output, "eurConvBondValues", NOT_OVER_WRITE);
+    OUT_DATA_LINE_3(*output <<, m_F, m_S0, optionValue);
     PRINT_2DATA_LINE(m_S0, optionValue)
 }
 

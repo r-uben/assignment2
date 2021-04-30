@@ -24,8 +24,10 @@ using namespace std;
 
 // CSV
 #define OUT                                                     output <<
-#define DATA_LINE_2(a, b)                                       OUT (a) COMMA (b) END_LINE
-#define DATA_LINE_3(a, b, c)                                    OUT (a) COMMA (b) COMMA (c) END_LINE
+#define OUT_DATA_LINE_2(out, a, b)                              out (a) COMMA (b) END_LINE
+#define OUT_DATA_LINE_3(out, a, b, c)                           out (a) COMMA (b) COMMA (c) END_LINE
+#define DATA_LINE_2(a, b)                                       OUT_DATA_LINE_2(OUT, a, b)
+#define DATA_LINE_3(a, b, c)                                    OUT_DATA_LINE_3(OUT, a, b, c)
 #define DATA_LINE_4(a, b, c, d)                                 OUT (a) COMMA (b) COMMA (c) COMMA (d) END_LINE
 #define DATA_LINE_5(a, b, c, d, e)                              OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) END_LINE
 #define DATA_LINE_6(a, b, c, d, e, f)                           OUT (a) COMMA (b) COMMA (c) COMMA (d) COMMA (e) COMMA (f) END_LINE

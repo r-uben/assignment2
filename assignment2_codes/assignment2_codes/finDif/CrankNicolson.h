@@ -17,7 +17,7 @@ class CCrankNicolson
 public:
     CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, int J, int I);
     // Main functions
-    void convertibleBond(bool lu, double tol = 1.e-3, double omega = 1.);
+    void convertibleBond(ofstream *output, bool lu, double tol = 1.e-3, double omega = 1.);
 private:
     /// Other Functions
     // PDE coefficients

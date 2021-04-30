@@ -26,8 +26,9 @@ int main()
     
     output << "F,S,V" << endl;
 
+    
     CN crank(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 75, Smax, J, I);
-    crank.convertibleBond(LU);
+    crank.convertibleBond(&output, LU);
 
     output.close();
     
