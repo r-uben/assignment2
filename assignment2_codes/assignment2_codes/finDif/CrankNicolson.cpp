@@ -87,17 +87,16 @@ CN::convertibleBond(bool lu, double tol, double omega)
         // PRINT_4DATA_LINE(a[0], b[0],c[0], d[0])
         for(int j=1;j< m_J;j++)
         {
-            a.push_back( aFunc(j) );
-            b.push_back( bFunc(j) );
-            c.push_back( cFunc(j) );
-            d.push_back( dFunc(j, vOld) );
-            // PRINT_4DATA_LINE(aFunc(j), bFunc(j), cFunc(j), dFunc(j, vOld));
+            a.push_back( aFunc(t, j) );
+            b.push_back( bFunc(t, j) );
+            c.push_back( cFunc(t, j) );
+            d.push_back( dFunc(t, j, vOld) );
             
             // LU method
             if (lu == true)
             {
-                beta.push_back( betaFunc(j, beta[j-1]) );
-                D.push_back( DFunc(j, beta[j-1], d[j], D[j-1]) );
+                beta.push_back( betaFunc(t, j, beta[j-1]) );
+                D.push_back( DFunc(t, j, beta[j-1], d[j], D[j-1]) );
             }
         }
         // Boundary conditions at S = Smax
@@ -109,13 +108,13 @@ CN::convertibleBond(bool lu, double tol, double omega)
         // LU METHOD
         if (lu == true)
         {
-            beta.push_back( betaFunc(m_J, beta[m_J-1]) );
-            D.push_back( DFunc(m_J, beta[m_J-1], d[m_J], D[m_J-1]) );
+            beta.push_back( betaFunc(t, m_J, beta[m_J-1]) );
+            D.push_back( DFunc(t, m_J, beta[m_J-1], d[m_J], D[m_J-1]) );
             // Solve matrix equations with LU method
             vNew[0] = m_X;
             vNew[m_J] = D[m_J] / beta[m_J];
             for (int j=m_J-1; j >=0; j--)
-                vNew[j] = prevV(j, beta, D, vNew);
+                vNew[j] = prevV(t, j, beta, D, vNew);
         }
         if (lu == false)
         {
@@ -169,54 +168,55 @@ CN::convertibleBond(bool lu, double tol, double omega)
     ofstream output;
     OpenCSVFile(&output, "eurConvBondValues", NOT_OVER_WRITE);
     DATA_LINE_3(m_F, m_S0, optionValue);
+    PRINT_2DATA_LINE(m_S0, optionValue)
 }
 
 
 // PDE COEFFICIENTS
 double
-CN::aFunc(int j)
+CN::aFunc(double t, int j)
 {
-    double first_term   = -0.25 * pow(m_sigma, 2) * pow(j, 2*m_beta) * pow(m_dS, 2*(m_beta-1));
-    double second_term  =  0.25 * m_kappa * ( theta(m_dt) / m_dS - j);
+    double first_term   = -0.25 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2*(m_beta-1));
+    double second_term  =  0.25 * m_kappa * ( theta(t) / m_dS - j);
     return first_term + second_term;
 }
 double
-CN::bFunc(int j)
+CN::bFunc(double t, int j)
 {
-    double long_term = 0.5 * pow(m_sigma, 2) * pow(j, 2*m_beta) * pow(m_dS, 2*(m_beta-1));
-    return 1 / m_dt + m_r / 2 + long_term;
+    double long_term = 0.5 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2.*(m_beta-1.));
+    return 1. / m_dt + 0.5 * m_r  + long_term;
 }
 double
-CN::cFunc(int j)
+CN::cFunc( double t, int j)
 {
-    double first_term   = -0.25 * pow(m_sigma, 2) * pow(j, 2*m_beta) * pow(m_dS, 2*(m_beta-1));
-    double second_term  = -0.25 * m_kappa * ( theta(m_dt) / m_dS - j);
+    double first_term   = -0.25 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2.*(m_beta-1.));
+    double second_term  = -0.25 * m_kappa * ( theta(t) / m_dS - j);
     return first_term + second_term;
 }
 double
-CN::dFunc(int j, vector<double> &v)
+CN::dFunc( double t, int j, vector<double> &v)
 {
-    double a = aFunc(j);
-    double b = bFunc(j);
-    double c = cFunc(j);
-    double d =  - ( a * v[j-1] + (b - 2 / m_dt) * v[j] + c * v[j+1] );
+    double a = aFunc(t, j);
+    double b = bFunc(t, j);
+    double c = cFunc(t, j);
+    double d =  - ( a * v[j-1] + (b - 2 / m_dt) * v[j] + c * v[j+1] ) + m_C * exp(-m_alpha * t);
     return d;
 }
 // LU COEFFICIENTS
 double
-CN::betaFunc(int j, double prevBeta)
+CN::betaFunc(double t, int j, double prevBeta)
 {
-    return bFunc(j) - (aFunc(j) * cFunc(j-1)) / prevBeta;
+    return bFunc(t, j) - (aFunc(t, j) * cFunc(t, j-1)) / prevBeta;
 }
 double
-CN::DFunc(int j, double prevBeta, double d, double prevD)
+CN::DFunc( double t, int j, double prevBeta, double d, double prevD)
 {
-    return d - (aFunc(j) * prevD) / prevBeta;
+    return d - (aFunc(t, j) * prevD) / prevBeta;
 }
 double
-CN::prevV(int j, vector<double> &beta, vector<double> &D, vector<double> &V)
+CN::prevV(double t, int j, vector<double> &beta, vector<double> &D, vector<double> &V)
 {
-    return 1 / beta[j] * (D[j] - cFunc(j) * V[j+1]);
+    return 1 / beta[j] * (D[j] - cFunc(t, j) * V[j+1]);
 }
 // USEFUL FUNCTIONS
 double

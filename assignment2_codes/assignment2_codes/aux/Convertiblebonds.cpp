@@ -35,7 +35,7 @@ CONV_BONDS::A(double t)
 double
 CONV_BONDS::B(double t)
 {
-    double X_term = 2 * m_X * m_R * exp( -(m_r - m_kappar) * (m_T - t) ) * sinh( 0.5 * m_kappar * (m_T -t) );
+    double X_term = 2 * m_X * m_R * exp( -0.5 * (m_r - m_kappar) * (m_T - t) ) * sinh( 0.5 * m_kappar * (m_T -t) );
     double C_term = - m_C / m_alphar * exp(m_r * t) * ( exp(-m_alphar * m_T) - exp(-m_alphar * t));
     return X_term + C_term;
 }
@@ -51,7 +51,7 @@ CONV_BONDS::V(double S, double t)
 double
 CONV_BONDS::V_S0(double t)
 {
-    double F_term = m_F * exp( -m_R * (m_T - t) );
-    double C_term = m_C / ( m_r + m_alpha ) * exp( -m_r * m_T ) * ( exp(m_alpha * (m_T - t)) - exp(-m_r * (m_T - t)) );
+    double F_term = m_F * exp( -m_r * (m_T - t) );
+    double C_term = m_C / ( m_r + m_alpha ) * exp( -m_alpha * m_T ) * ( exp(m_alpha * (m_T - t)) - exp(-m_r * (m_T - t)) );
     return F_term + C_term;
 }

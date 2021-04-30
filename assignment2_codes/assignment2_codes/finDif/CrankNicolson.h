@@ -21,14 +21,14 @@ public:
 private:
     /// Other Functions
     // PDE coefficients
-    double aFunc(int j);
-    double bFunc(int j);
-    double cFunc(int j);
-    double dFunc(int j, vector<double> &v);
+    double aFunc(double t, int j);
+    double bFunc(double t, int j);
+    double cFunc(double t, int j);
+    double dFunc(double t, int j, vector<double> &v);
     // LU coefficients
-    double betaFunc(int j, double prevBeta);
-    double DFunc(int j, double prevBeta, double d, double prevD);
-    double prevV(int j, vector<double>& beta, vector<double>& D, vector<double>& V);
+    double betaFunc(double t, int j, double prevBeta);
+    double DFunc(double t, int j, double prevBeta, double d, double prevD);
+    double prevV(double t, int j, vector<double>& beta, vector<double>& D, vector<double>& V);
     // Useful Functions
     double approxPrice(vector<double> &v, vector<double> &s);
     double theta(double t);
