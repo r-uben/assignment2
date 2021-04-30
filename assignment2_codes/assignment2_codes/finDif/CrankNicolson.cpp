@@ -49,13 +49,13 @@ CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double 
     m_sigma     = sigma;
     m_kappar    = kappa + r;
     m_alphar    = alpha + r;
-    m_S0    = S0;
-    m_Smax  = Smax;
-    m_J     = J;
-    m_I     = I;
-    m_dS    = m_Smax / J;
-    m_dt    = m_T / I;
-    m_jStar = m_S0/m_dS;
+    m_S0        = S0;
+    m_Smax      = Smax;
+    m_J         = J;
+    m_I         = I;
+    m_dS        = m_Smax / J;
+    m_dt        = m_T / I;
+    m_jStar     = m_S0/m_dS;
 }
 void
 CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)

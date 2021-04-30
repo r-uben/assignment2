@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		304A50BC263C7CB900854086 /* EDP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 304A50BA263C7CB900854086 /* EDP.cpp */; };
+		304A50BF263C7EB900854086 /* ConvBondEDP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 304A50BD263C7EB900854086 /* ConvBondEDP.cpp */; };
 		309B380E2639A1510041F884 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 309B380D2639A1510041F884 /* main.cpp */; };
 		309B38172639A4270041F884 /* Convertiblebonds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 309B38152639A4270041F884 /* Convertiblebonds.cpp */; };
 		309B381B2639B1140041F884 /* CrankNicolson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 309B38192639B1140041F884 /* CrankNicolson.cpp */; };
@@ -29,6 +31,10 @@
 
 /* Begin PBXFileReference section */
 		304A50B8263C416900854086 /* OpenDocuments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenDocuments.h; sourceTree = "<group>"; };
+		304A50BA263C7CB900854086 /* EDP.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EDP.cpp; sourceTree = "<group>"; };
+		304A50BB263C7CB900854086 /* EDP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EDP.h; sourceTree = "<group>"; };
+		304A50BD263C7EB900854086 /* ConvBondEDP.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConvBondEDP.cpp; sourceTree = "<group>"; };
+		304A50BE263C7EB900854086 /* ConvBondEDP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConvBondEDP.h; sourceTree = "<group>"; };
 		309B380A2639A1510041F884 /* assignment2_codes */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = assignment2_codes; sourceTree = BUILT_PRODUCTS_DIR; };
 		309B380D2639A1510041F884 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		309B38152639A4270041F884 /* Convertiblebonds.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Convertiblebonds.cpp; sourceTree = "<group>"; };
@@ -86,6 +92,10 @@
 			children = (
 				309B38232639B2490041F884 /* PrintMacros.h */,
 				309B38152639A4270041F884 /* Convertiblebonds.cpp */,
+				304A50BA263C7CB900854086 /* EDP.cpp */,
+				304A50BB263C7CB900854086 /* EDP.h */,
+				304A50BD263C7EB900854086 /* ConvBondEDP.cpp */,
+				304A50BE263C7EB900854086 /* ConvBondEDP.h */,
 				309B38162639A4270041F884 /* ConvertibleBonds.h */,
 				309B381C2639B1CA0041F884 /* GeneralFunctions.cpp */,
 				309B381D2639B1CA0041F884 /* GeneralFunctions.h */,
@@ -173,8 +183,10 @@
 			files = (
 				309B38282639B2970041F884 /* GridConstructor.cpp in Sources */,
 				309B381E2639B1CA0041F884 /* GeneralFunctions.cpp in Sources */,
+				304A50BF263C7EB900854086 /* ConvBondEDP.cpp in Sources */,
 				309B381B2639B1140041F884 /* CrankNicolson.cpp in Sources */,
 				309B38212639B20F0041F884 /* PayoffFunctions.cpp in Sources */,
+				304A50BC263C7CB900854086 /* EDP.cpp in Sources */,
 				309B38172639A4270041F884 /* Convertiblebonds.cpp in Sources */,
 				309B380E2639A1510041F884 /* main.cpp in Sources */,
 			);
