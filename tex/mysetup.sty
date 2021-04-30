@@ -1,5 +1,5 @@
 %%% DOCUMENT STRUCTURE
-\usepackage[total={18cm,21cm},top=3cm,bottom=3cm, left=3.2cm,right=3.2cm, footskip=0.4in, headsep=1cm]{geometry} 
+\usepackage[total={18cm,21cm},top=3cm,bottom=3cm, left=2.7cm,right=2.7cm, footskip=0.4in, headsep=1cm]{geometry} 
 \usepackage{setspace, enumitem}
 \setlength{\parindent}{1cm}
 \renewcommand{\baselinestretch}{1.2}
@@ -10,6 +10,7 @@
 
 %%% TYPOGRAPHY,  LANGUAGE,  ENCODING
 \usepackage{lmodern}
+
 \usepackage[utf8]{inputenc}
 \usepackage[british]{babel}
 
@@ -52,6 +53,19 @@
 \newtheorem{example}{Example}
 \newtheorem{prop}{Proposition}
 \newtheorem{remark}{Remark}
+
+%%% SECTIONS
+\usepackage{titlesec}
+\titleformat{\section}
+{\centering\normalfont\Large\scshape}{\thesection.}{0.5em}{}
+\titleformat{\subsection}
+{\normalfont\large\bfseries}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}
+{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\paragraph}[runin]
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titleformat{\subparagraph}[runin]
+{\normalfont\normalsize\bfseries}{\thesubparagraph}{1em}{}
 
 
 \usepackage{thmtools}

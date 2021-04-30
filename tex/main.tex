@@ -3,7 +3,7 @@
 
 %%% MY PACKAGE
 \usepackage{mysetup}
-
+\allowdisplaybreaks 
 
 \begin{document}
 	
@@ -11,17 +11,48 @@
 	\author{Studend ID: 10729579}
 	\maketitle
 	
-	\vspace{-1cm}
+	\vspace{-0.3cm}
+	\setcounter{secnumdepth}{0}
+	\section{Introduction}
+		\input{tasks/intro}
+	
 	%& FIRST TASK: EUROPEAN OPTIONS
+	\newpage
+	\setcounter{secnumdepth}{4}
 	\section{European Options}
-	\input{tasks/task1_eur_op}
+		\input{tasks/task1_eur_op}
 	
 	\vspace{1cm}
 	%& SECOND TASK: AMERICAN OPTIONS - EMBEDDED OPTIONS
 	\section{American Options - embedded options}
 	
 	\newpage
-	\setcounter{secnumdepth}{0}
-	\section{Appendix I}
-	\input{appendixes/app1}
+	\appendix
+	
+	%& APPENDIXES
+	%%% SETTING EVERYTHING
+	\renewcommand{\thesubsection}{\Alph{subsection}}
+	\titleformat{\subsection}
+	{\normalfont\large\bfseries}{Appendix \thesubsection.}{0.5em}{}
+	\section*{Appendices}
+	\addcontentsline{toc}{section}{Appendices}
+
+	%%% THE APPENDIXES
+	%& APPENDIX I: SOLUTION FOR THE ODE FOR C
+	\subsection{Boundary conditions: Solving the ODE to obtain $B(t)$ for large $S$}\label{app_ODE_C}
+		\input{appendixes/app_solving_C_ode}
+		\newpage
+	%& APPENDIX II: VALUE FUNCTION WHEN S=0
+	\subsection{Boundary conditions: Value function when $S=0$}\label{app_bound_V_S0}
+		\input{appendixes/app_V_S0}
+		\newpage
+	%& APPENDIX III: DERIVATION OF THE COEFFICIENT FUNCTIONS
+	\subsection{Approximation of the coefficients for the Crank-Nicolson method}\label{app_coeff_CrankNic}
+		\input{appendixes/app_coeff_functions}
+		\newpage
+	%& APPENDIX IV: ANALYTIC SOLUTION FOR K = 0 AND BETA = 1
+		\input{appendixes/app_analytic_sol}	
+	
+		
+
 \end{document}

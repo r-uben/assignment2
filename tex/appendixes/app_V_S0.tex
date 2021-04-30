@@ -1,0 +1,73 @@
+Now, we will find the solution for the PDE given in (\ref{pde_S0}), i.e., 
+\begin{equation}
+	\partial_t V + \kappa \theta(t) \partial_S V - r V + C \exp{-\alpha t} = 0,
+\end{equation}
+with the boundary condition given by 
+\begin{equation}
+	V(S=0,T) = F.
+\end{equation}
+
+We are going to use the method of characteristic, because it is a first order differential equation. To do so, note that (\ref{pde_S0}) can be written as
+\begin{equation}
+	a \partial_t V + b(t) \partial_S V + c V = f(t),
+\end{equation}
+where $a \equiv 1$, $b(t) = \kappa \theta(t)$, $c\equiv -r$ and $f(t) = -Ce^{-\alpha t}$. Hence, the characteristic equation is
+\begin{equation}\label{char_eq}
+	S'(t) = \kappa  \theta(t).
+\end{equation}
+
+Note that $\theta(t) = \frac{1}{\mu}\theta'(t)$, which implies that (\ref{char_eq}) is solved by
+\begin{equation}
+	S(t) = \frac{\kappa}{\mu} \theta(t) + \text{cte},
+\end{equation}
+i.e., it describes a whole family of solutions given by the integral curves defined by the following equation
+\begin{equation}\label{integral_curves}
+	B(S,t) = S - \frac{\kappa}{\mu} \theta(t) \equiv \text{cte}.
+\end{equation}
+By choosing $A(t) = t$, we obtain that the Jacobian 
+\begin{equation}
+	J = \partial_S B(S, t)  = 1 \not = 0,
+\end{equation}
+as required. Hence, we can write $V$ as $V(S,t) = \omega(A(t), B(S,t))$, from which, by the chain rule, we obtain
+\begin{equation}\label{chain_rule}
+	\begin{aligned}
+		\partial_t V& = \partial_A \omega \ A'(t) + \partial_B \omega \ \partial_t  B(S,t)\\
+		\partial_S V& = \partial_B \omega \ \partial_S B(S,t)
+	\end{aligned}
+\end{equation}
+Now calculate the derivatives
+\begin{equation}
+	A'(t) = 1; \doublequad  \partial_tB (S,t) = -\kappa \theta(t); \doublequad \partial_SB(S,t) = 1,
+\end{equation}
+and substitute them into (\ref{chain_rule}) to obtain
+\begin{equation}
+	\begin{aligned}
+		\partial_t V& = \partial_A \omega +  -\kappa\theta(t)\partial_B \omega \ \\
+		\partial_S V& = \partial_B \omega, 
+	\end{aligned}
+\end{equation}
+and substitue it into (\ref{pde_S0}) to obtain
+$$
+\begin{aligned}
+	\partial_A \omega   -\kappa\theta(t)\partial_B \omega + \kappa \theta(t) \partial_B \omega - r \omega + C \exp{-\alpha A} &= 0,	\\
+	\partial_A \omega  - r \omega + C \exp{-\alpha A} &= 0,\\
+	\partial_A \omega \exp{-rA}  - r \omega \exp{-rA} + C \exp{-(\alpha+r) A} &= 0,\\
+	\partial_A\left(\omega \exp{-rA}\right) = -C \exp{-(\alpha+r)A},
+\end{aligned}
+$$
+and therefore
+\begin{equation}
+	V(S,t) =  \frac{C}{r+\alpha}\exp{-\alpha t} + M \ \exp{rt},
+\end{equation} 
+where $M$ must be derived from initial conditions:
+\begin{equation}
+	\begin{aligned}
+		V(S,t) &=  \frac{C}{r+\alpha}\exp{-\alpha t} + F \exp{-r(T-t)} - \frac{C}{r+\alpha}\exp{-(\alpha+r) T + rt}\\
+		&=\frac{C}{r+\alpha}\exp{-\alpha t} + F \exp{-r(T-t)} - \frac{C}{r+\alpha}\exp{-\alpha T -r(T-t)}\\
+	\end{aligned}
+\end{equation}
+
+Finally,
+\begin{equation}
+	V(S=0,t) =  F \exp{-r(T-t)} + \frac{C}{r+\alpha} \exp{-\alpha T}\left( \exp{\alpha (T-t)} -\exp{-r(T-t)} \right).
+\end{equation}

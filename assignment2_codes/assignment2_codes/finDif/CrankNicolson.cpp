@@ -8,7 +8,10 @@
 /// Header of the explicit difference method
 #include "CrankNicolson.h"
 
-/// Header with some important and usefule functions
+/// Header with convertible bonds functions
+#include "ConvertibleBonds.h"
+
+/// Header with some important and useful functions
 #include "GeneralFunctions.h"
 
 /// Header with payoff functions of several options
@@ -70,10 +73,12 @@ CN::convertibleBond(bool lu, double tol, double omega)
     // start looping through time levels
     for(int i=m_I-1; i>=0; i--)
     {
+        // CONVERTIBLE BONDS LIBRARY
+        CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma);
         double t = i*m_dt;
         /// BOUNDARY CONDITIONS
         // Declare vectors for matrix equations
-        vector<double> a = {0.}, b = {1.}, c = {0.}, d = {m_F * AUX::discountFactor(m_r, m_T-t)};
+        vector<double> a = {0.}, b = {1.}, c = {0.}, d = {convBonds.V_S0(t)};
         // LU method
         vector<double> beta = {b[0]}, D = {d[0]};
         
@@ -99,9 +104,9 @@ CN::convertibleBond(bool lu, double tol, double omega)
         a.push_back(0.);
         b.push_back(1.);
         c.push_back(0.);
-        d.push_back(m_R * m_Smax);
+        d.push_back(convBonds.V(m_Smax,t));
         
-        // LU method
+        // LU METHOD
         if (lu == true)
         {
             beta.push_back( betaFunc(m_J, beta[m_J-1]) );
@@ -112,7 +117,7 @@ CN::convertibleBond(bool lu, double tol, double omega)
             for (int j=m_J-1; j >=0; j--)
                 vNew[j] = prevV(j, beta, D, vNew);
         }
-        else
+        if (lu == false)
         {
             // Solve matrix equations with SOR
             int sor, iterMax = 10000;
@@ -161,7 +166,9 @@ CN::convertibleBond(bool lu, double tol, double omega)
     // output the estimated option price
     double optionValue = approxPrice(vNew, S);
     // output the estimated option price
-    PRINT_2DATA_LINE("Value of the option", optionValue);
+    ofstream output;
+    OpenCSVFile(&output, "eurConvBondValues", NOT_OVER_WRITE);
+    DATA_LINE_3(m_F, m_S0, optionValue);
 }
 
 
@@ -169,17 +176,22 @@ CN::convertibleBond(bool lu, double tol, double omega)
 double
 CN::aFunc(int j)
 {
-    return 0.25 * (m_sigma * m_sigma * j * j - m_r * j);
+    double first_term   = -0.25 * pow(m_sigma, 2) * pow(j, 2*m_beta) * pow(m_dS, 2*(m_beta-1));
+    double second_term  =  0.25 * m_kappa * ( theta(m_dt) / m_dS - j);
+    return first_term + second_term;
 }
 double
 CN::bFunc(int j)
 {
-    return - 0.5 * m_sigma * m_sigma * j * j - 0.5 * m_r - 1. / m_dt;
+    double long_term = 0.5 * pow(m_sigma, 2) * pow(j, 2*m_beta) * pow(m_dS, 2*(m_beta-1));
+    return 1 / m_dt + m_r / 2 + long_term;
 }
 double
 CN::cFunc(int j)
 {
-    return 0.25 * (m_sigma * m_sigma * j * j + m_r * j);
+    double first_term   = -0.25 * pow(m_sigma, 2) * pow(j, 2*m_beta) * pow(m_dS, 2*(m_beta-1));
+    double second_term  = -0.25 * m_kappa * ( theta(m_dt) / m_dS - j);
+    return first_term + second_term;
 }
 double
 CN::dFunc(int j, vector<double> &v)
@@ -187,10 +199,10 @@ CN::dFunc(int j, vector<double> &v)
     double a = aFunc(j);
     double b = bFunc(j);
     double c = cFunc(j);
-    double d =  - ( a * v[j-1] + (b + 2 / m_dt) * v[j] + c * v[j+1] );
+    double d =  - ( a * v[j-1] + (b - 2 / m_dt) * v[j] + c * v[j+1] );
     return d;
 }
-// LU COEFFICNETS
+// LU COEFFICIENTS
 double
 CN::betaFunc(int j, double prevBeta)
 {
@@ -207,14 +219,11 @@ CN::prevV(int j, vector<double> &beta, vector<double> &D, vector<double> &V)
     return 1 / beta[j] * (D[j] - cFunc(j) * V[j+1]);
 }
 // USEFUL FUNCTIONS
-
-//double
-//CN::interiorPoints(vector<double> &v, int j)
-//{
-//    double numerator    = A(j) * v[j+1] + B(j) * v[j] + C(j) * v[j-1];
-//    double denominator  = 1. / (1. + m_r * m_dt);
-//    return numerator * denominator;
-//}
+double
+CN::theta(double t)
+{
+    return (1 + m_mu) * m_X * exp(m_mu * t);
+}
 
 double
 CN::approxPrice(vector<double> &v, vector<double> &s)

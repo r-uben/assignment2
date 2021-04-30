@@ -1,5 +1,5 @@
 %& TASK 1: EUROPEAN OPTIONS
-\noindent We are told to derive the boundary condition 
+\noindent We are told to derive the boundary conditions for (\ref{general_pde}). To do so, we are assuming that 
 %%% BOUNDARY CONDITIONS: ASSUMPTION FOR THE SOLUTION OF THE PDE 
 	\begin{equation}\label{boundary_condition}
 		V(S, t) = S A(t) + B(t) \doublequad \text{ as } S\to \infty,
@@ -7,10 +7,9 @@
 for some functions $A$ and $B$ which solve the approximate problem
 %%% THE PDE 
 	\begin{equation}\label{pde}
-		\partial_t V + \kappa (X - S) \ \partial_S V - rV + C \exp{-\alpha t} = 0.
+		\partial_t V + \kappa (X - S) \ \partial_S V - rV + C \exp{-\alpha t} = 0
 	\end{equation}
-
-Our assumption is that the solution for (\ref{pde}) is of the form of (\ref{boundary_condition}). Hence, we must firstly note~that
+obtained after taking $S\to\infty$ in (\ref{general_pde}). We must firstly note~that
 	\begin{equation}\label{derivatives}
 		\partial_t V (S, t) = S A'(t) + B'(t), \doublequad \text{ and } \doublequad \partial_S V = A(t),
 	\end{equation}
@@ -20,6 +19,7 @@ to further substitute (\ref{derivatives}) in (\ref{pde}) and get
 			S A'(t) + B'(t) + \kappa (X - S) A(t) - r \left[ S A(t) + B(t)\right] + C\exp{-\alpha t} = 0.
 		\end{aligned}
 	\end{equation}
+
 Since the solution is of the form (\ref{boundary_condition}), we may arrange (\ref{calc1}) into something of the same form, that is,
 	\begin{equation}\label{calc2}
 		\begin{aligned}
@@ -46,20 +46,17 @@ as $S\to\infty$. Hence,
 
 On the other hand, second equation gives us that $B$ is of the form $B(t) = C(t) \exp{-r (T-t)}$, $C(T) = B(T)$, where $C(t)$ is to be derived. Differentiating $B(t)$ and rearranging terms we get
 %%% ODE FOR THE "CONSTANT" MULTIPLYING B
-	\begin{equation}
+	\begin{equation}\label{C_ode}
 		C'(t) = - \exp{r(T-t)}f(t), 
 	\end{equation}
 with $  B_T \overset{\text{\tiny def}}{=} B(T) $, which is zero for large $S$, i.e.,
-	$$
-		\begin{aligned}
-			  C(t) 	&= B_T + \int_t^T \exp{r(T-s)}f(s)\d s\\
-					&= B_T + \int_t^T \exp{r(T-s)}\left[\kappa X A(s) + C\exp{-\alpha s}\right]\d s\\
-					&= B_T + \int_t^T \left[\kappa X R \exp{- (\kappa + r) (T-s)} \exp{r(T-s)} + C\exp{-(r+\alpha)s+rT}\right]\d s\\
-					&= B_T + \int_t^T \left[\kappa X R \exp{-\kappa (T-s)} + C\exp{-(r+\alpha)s +rT}\right]\d s\\
-					&= B_T + {X R \exp{-\kappa T}}  \left[\exp{\kappa T} - \exp{\kappa t}\right] - \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\\
-					&= B_T + {X R}  \left[1 -  \exp{-\kappa(T-t)}\right]- \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right] ;
-		\end{aligned}
-	$$
+	\begin{equation}\label{C_ode_sol}
+		 C(t) 	= B_T + \int_t^T \exp{r(T-s)}f(s)\d s,
+	\end{equation}
+which implies that (see Appendix \ref{app_ODE_C})
+	\begin{equation}
+		C(t) = B_T + {X R}  \left[1 -  \exp{-\kappa(T-t)}\right]- \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]
+	\end{equation}
 
 Therefore, for $S$ sufficiently large we obtain,
 	%%% B(t) 

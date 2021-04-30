@@ -1,0 +1,35 @@
+\noindent We are supposed to price a bond contract whose terminal condition is given by
+%%% TERMINAL CONDITION OF THE BOND PRICE 
+\begin{equation}
+	V(S,T) = \max \left(F, RS\right).
+\end{equation}
+
+Moreover, the issuer of the bond pays out a continuous coupon at the rate of 
+\begin{equation}
+	K(t) = C \exp{-\alpha t},
+\end{equation}
+for $\alpha$ and $C$ of his choosing. 
+
+The risk-neutral process followed by underlying stock price is given by
+\begin{equation}
+	\d S = \kappa \left(\theta(t)  - S\right)\d t + \sigma S^\beta \d W,
+\end{equation}
+with $\kappa$ being the mean reversion rate, $\beta$ the elasticity of variance in the market, and the function $\theta$ is given by
+\begin{equation}
+	\theta(t) = (1+\mu)X\exp{\mu t},
+\end{equation}
+where $X$ and $\mu$ are constant model parameters that can be determined from the market, reflecting the dividend payout of the firm.
+
+The market value $V(S,t)$ of this contract satisfies the following PDE
+\begin{equation}\label{general_pde}
+	\partial_t V + \frac{1}{2}\sigma^2 S^{2\beta}\partial_{SS}V + \kappa (\theta(t) - S)\partial_SV - rV + C\exp{-\alpha t} = 0,
+\end{equation}
+where its boundary conditions are given by
+\begin{equation}\label{pde_S0}
+	\partial_t V + \kappa \theta(t) \partial_S V - rV + C\exp{-\alpha t} = 0, \doublequad \text{ at } S= 0,
+\end{equation}
+and
+\begin{equation}
+	V(S,t) = S A(t) + B(t), \doublequad \text{ as } S\to\infty,
+\end{equation}
+for $A$ and $B$ some functions to be derived.

@@ -1,0 +1,11 @@
+In this Appendix we provide the derivation of the solution of (\ref{C_ode}) by solving the integral written in~(\ref{C_ode_sol}):
+$$
+\begin{aligned}
+	C(t) 	&= B_T + \int_t^T \exp{r(T-s)}f(s)\d s\\
+	&= B_T + \int_t^T \exp{r(T-s)}\left[\kappa X A(s) + C\exp{-\alpha s}\right]\d s\\
+	&= B_T + \int_t^T \left[\kappa X R \exp{- (\kappa + r) (T-s)} \exp{r(T-s)} + C\exp{-(r+\alpha)s+rT}\right]\d s\\
+	&= B_T + \int_t^T \left[\kappa X R \exp{-\kappa (T-s)} + C\exp{-(r+\alpha)s +rT}\right]\d s\\
+	&= B_T + {X R \exp{-\kappa T}}  \left[\exp{\kappa T} - \exp{\kappa t}\right] - \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\\
+	&= B_T + {X R}  \left[1 -  \exp{-\kappa(T-t)}\right]- \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right] .
+\end{aligned}
+$$

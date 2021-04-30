@@ -13,6 +13,7 @@ public:
     CConvertibleBonds(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma);
     
     double V(double S, double t);
+    double V_S0(double t);
     
 private:
     // PARAMETERS

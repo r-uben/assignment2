@@ -28,6 +28,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		304A50B8263C416900854086 /* OpenDocuments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenDocuments.h; sourceTree = "<group>"; };
 		309B380A2639A1510041F884 /* assignment2_codes */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = assignment2_codes; sourceTree = BUILT_PRODUCTS_DIR; };
 		309B380D2639A1510041F884 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		309B38152639A4270041F884 /* Convertiblebonds.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Convertiblebonds.cpp; sourceTree = "<group>"; };
@@ -90,6 +91,7 @@
 				309B381D2639B1CA0041F884 /* GeneralFunctions.h */,
 				309B381F2639B20F0041F884 /* PayoffFunctions.cpp */,
 				309B38202639B20F0041F884 /* PayoffFunctions.h */,
+				304A50B8263C416900854086 /* OpenDocuments.h */,
 			);
 			path = aux;
 			sourceTree = "<group>";

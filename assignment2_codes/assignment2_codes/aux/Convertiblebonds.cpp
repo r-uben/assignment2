@@ -40,8 +40,18 @@ CONV_BONDS::B(double t)
     return X_term + C_term;
 }
 
+// GENERAL VALUE FUNCTION
 double
 CONV_BONDS::V(double S, double t)
 {
     return S * A(t) + B(t);
+}
+
+// VALUE FUNCTION WHEN S = 0
+double
+CONV_BONDS::V_S0(double t)
+{
+    double F_term = m_F * exp( -m_R * (m_T - t) );
+    double C_term = m_C / ( m_r + m_alpha ) * exp( -m_r * m_T ) * ( exp(m_alpha * (m_T - t)) - exp(-m_r * (m_T - t)) );
+    return F_term + C_term;
 }
