@@ -87,16 +87,16 @@ CN::convertibleBond(bool lu, double tol, double omega)
         // PRINT_4DATA_LINE(a[0], b[0],c[0], d[0])
         for(int j=1;j< m_J;j++)
         {
-            a.push_back( aFunc(t, j) );
-            b.push_back( bFunc(t, j) );
-            c.push_back( cFunc(t, j) );
-            d.push_back( dFunc(t, j, vOld) );
+            a.push_back(aFunc(t, j));
+            b.push_back(bFunc(t, j));
+            c.push_back(cFunc(t, j));
+            d.push_back(dFunc(t, j, vOld));
             
             // LU method
             if (lu == true)
             {
-                beta.push_back( betaFunc(t, j, beta[j-1]) );
-                D.push_back( DFunc(t, j, beta[j-1], d[j], D[j-1]) );
+                beta.push_back(betaFunc(t, j, beta[j-1]));
+                D.push_back(DFunc(t, j, beta[j-1], d[j], D[j-1]));
             }
         }
         // Boundary conditions at S = Smax
@@ -128,14 +128,14 @@ CN::convertibleBond(bool lu, double tol, double omega)
             {
               double y = (d[0] - c[0] * vNew[1]) / b[0];
               vNew[0] = vNew[0] + omega * (y-vNew[0]);
-              cout << " ( " << vNew[0] << " , ";
+              cout << " (" << vNew[0] << ", ";
             }
             // 0 < j < jMax
             for(int j=1; j<m_J; j++)
             {
               double y = (d[j] - a[j] * vNew[j-1] - c[j]*vNew[j+1]) / b[j];
               vNew[j] = vNew[j] + omega * (y-vNew[j]);
-              cout << vNew[j] << " , ";
+              cout << vNew[j] << ", ";
             }
             // j = jMax
             {
@@ -187,14 +187,14 @@ CN::bFunc(double t, int j)
     return 1. / m_dt + 0.5 * m_r  + long_term;
 }
 double
-CN::cFunc( double t, int j)
+CN::cFunc(double t, int j)
 {
     double first_term   = -0.25 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2.*(m_beta-1.));
     double second_term  = -0.25 * m_kappa * ( theta(t) / m_dS - j);
     return first_term + second_term;
 }
 double
-CN::dFunc( double t, int j, vector<double> &v)
+CN::dFunc(double t, int j, vector<double> &v)
 {
     double a = aFunc(t, j);
     double b = bFunc(t, j);
@@ -209,7 +209,7 @@ CN::betaFunc(double t, int j, double prevBeta)
     return bFunc(t, j) - (aFunc(t, j) * cFunc(t, j-1)) / prevBeta;
 }
 double
-CN::DFunc( double t, int j, double prevBeta, double d, double prevD)
+CN::DFunc(double t, int j, double prevBeta, double d, double prevD)
 {
     return d - (aFunc(t, j) * prevD) / prevBeta;
 }
