@@ -58,8 +58,10 @@ CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double 
     m_jStar = m_S0/m_dS;
 }
 void
-CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
+CN::convertibleBond(ofstream *output, int method, double tol, double omega)
 {
+    // CONVERTIBLE BONDS LIBRARY
+    CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma);
     vector <double> vOld(m_J+1), vNew(m_J+1);
     // Setup and initialise the stock price
     vector <double> S = GRID::setupStockPrices(m_dS, m_J);
@@ -73,8 +75,6 @@ CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
     // start looping through time levels
     for(int i=m_I-1; i>=0; i--)
     {
-        // CONVERTIBLE BONDS LIBRARY
-        CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma);
         double t = i*m_dt;
         /// BOUNDARY CONDITIONS
         // Declare vectors for matrix equations
@@ -93,7 +93,7 @@ CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
             d.push_back(dFunc(t, j, vOld));
             
             // LU method
-            if (lu == true)
+            if (method == LU)
             {
                 beta.push_back(betaFunc(t, j, beta[j-1]));
                 D.push_back(DFunc(t, j, beta[j-1], d[j], D[j-1]));
@@ -106,17 +106,17 @@ CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
         d.push_back(convBonds.V(m_Smax,t));
         
         // LU METHOD
-        if (lu == true)
+        if (method == LU)
         {
-            beta.push_back( betaFunc(t, m_J, beta[m_J-1]) );
-            D.push_back( DFunc(t, m_J, beta[m_J-1], d[m_J], D[m_J-1]) );
+            beta.push_back(betaFunc(t, m_J, beta[m_J-1]));
+            D.push_back(DFunc(t, m_J, beta[m_J-1], d[m_J], D[m_J-1]));
             // Solve matrix equations with LU method
             vNew[0] = m_X;
             vNew[m_J] = D[m_J] / beta[m_J];
             for (int j=m_J-1; j >=0; j--)
                 vNew[j] = prevV(t, j, beta, D, vNew);
         }
-        if (lu == false)
+        if (method == SOR)
         {
             // Solve matrix equations with SOR
             int sor, iterMax = 10000;
@@ -158,6 +158,10 @@ CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
             if(sor==iterMax)
                 PRINT_DATA_LINE("NOT CONVERGED");
         }
+        if (method == THOMAS)
+        {
+            vNew = thomasSolve(a, b, c, d);
+        }
         // Set old=new
         vOld = vNew;
     }
@@ -167,8 +171,9 @@ CN::convertibleBond(ofstream *output, bool lu, double tol, double omega)
     // output the estimated option price
     //ofstream output;
     // OpenCSVFile(&output, "eurConvBondValues", NOT_OVER_WRITE);
-    DATA_LINE(output, m_F, m_S0, optionValue);
-    PRINT_DATA_LINE(m_S0, optionValue);
+    double asympV = m_S0*convBonds.A(0) + convBonds.B(0);
+    DATA_LINE(output, m_F, m_S0, optionValue, asympV);
+    PRINT_DATA_LINE(m_S0, m_S0*m_R,optionValue, asympV);
 }
 
 
@@ -236,4 +241,23 @@ CN::approxPrice(vector<double> &v, vector<double> &s)
     vector<double> p1 = {s[m_jStar], v[m_jStar]};
     vector<double> p2 = {s[m_jStar+1], v[m_jStar+1]};
     return AUX::lagInterp(m_S0, p1, p2);
+}
+
+vector<double>
+CN::thomasSolve(const vector<double> &a,const vector<double> &b_,const vector<double> &c, vector<double> &d)
+{
+    int n=a.size();
+    std::vector<double> b(n),temp(n);
+    // initial first value of b
+    b[0]=b_[0];
+    for(int j=1;j<n;j++)
+    {
+        b[j]=b_[j]-c[j-1]*a[j]/b[j-1];
+        d[j]=d[j]-d[j-1]*a[j]/b[j-1];
+    }
+    // calculate solution
+    temp[n-1]=d[n-1]/b[n-1];
+    for(int j=n-2;j>=0;j--)
+        temp[j]=(d[j]-c[j]*temp[j+1])/b[j];
+    return temp;
 }

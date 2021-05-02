@@ -14,6 +14,9 @@ public:
     
     double V(double S, double t);
     double V_S0(double t);
+    // AUXILIAR FUNCTIONS
+    double A(double t);
+    double B(double t);
     
 private:
     // PARAMETERS
@@ -31,7 +34,4 @@ private:
     // AUXILIAR PARAMETERS
     double m_kappar;
     double m_alphar;
-    // AUXILIAR FUNCTIONS
-    double A(double t);
-    double B(double t);
 };

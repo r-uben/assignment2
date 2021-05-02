@@ -85,12 +85,8 @@
 			isa = PBXGroup;
 			children = (
 				309B38232639B2490041F884 /* PrintMacros.h */,
-				309B38152639A4270041F884 /* Convertiblebonds.cpp */,
-				309B38162639A4270041F884 /* ConvertibleBonds.h */,
 				309B381C2639B1CA0041F884 /* GeneralFunctions.cpp */,
 				309B381D2639B1CA0041F884 /* GeneralFunctions.h */,
-				309B381F2639B20F0041F884 /* PayoffFunctions.cpp */,
-				309B38202639B20F0041F884 /* PayoffFunctions.h */,
 				304A50B8263C416900854086 /* OpenDocuments.h */,
 			);
 			path = aux;
@@ -109,6 +105,10 @@
 		309B38252639B28A0041F884 /* aux */ = {
 			isa = PBXGroup;
 			children = (
+				309B381F2639B20F0041F884 /* PayoffFunctions.cpp */,
+				309B38202639B20F0041F884 /* PayoffFunctions.h */,
+				309B38152639A4270041F884 /* Convertiblebonds.cpp */,
+				309B38162639A4270041F884 /* ConvertibleBonds.h */,
 				309B38262639B2970041F884 /* GridConstructor.cpp */,
 				309B38272639B2970041F884 /* GridConstructor.h */,
 			);

@@ -1,8 +1,74 @@
+We are going to solve the equation (\ref{PDE}) when $\beta = 1$ and $\kappa = 0$, i.e.,
 \begin{equation}
-	\partial_t V + \frac{1}{2}\sigma^2 S^2 \partial_{SS}V -r V + C\exp{rt}= 0
+	\partial_t V + \frac{1}{2}\sigma^2 S^2 \partial_{SS}V -r V + C\exp{rt}= 0.
 \end{equation}
 
-$f(x,y)$
+To do so, we are going to try the method of variables separation, i.e., let's suppose that 
 \begin{equation}
-	f_x(x,y) + y^2 f_{yy}(x,y) + f(x,y) + g(x) = 0
+	V(S,t) = F(S)G(t) + g(t);
+\end{equation}
+but firstly we will find the solution for the honogeneous equation $V(S,t) = F(S)G(t)$. Note that
+$$
+	\begin{aligned}
+		F(S) G'(t) + \frac{1}{2}\sigma^2 S^2 F''(S)G(t) - r F(S)G(t)			 &= 0 \\
+		F(S) G'(t) + \left(\frac{1}{2}\sigma^2 S^2 F''(S) - r F(S)\right) G(t) 	&= 0\\
+		\frac{rF(S) - \frac{1}{2}\sigma^2S^2 F''(S)}{F(S)}						&=  \frac{G'(t)}{G(t)}\\
+		r - \frac{1}{2}\sigma^2 S^2 \frac{F''(S)}{F(S)} 						&=  \frac{G'(t)}{G(t)},
+	\end{aligned}
+$$
+and since there is an equality of functions depending on different variables, they are equal to a constant, say $M$, i.e., 
+$$
+	\begin{aligned}
+			r - \frac{1}{2}\sigma^2 S^2 \frac{F''(S)}{F(S)}  	&= M \\
+			 \frac{2(r-M)}{\sigma^2}\cdot \frac{1}{S^2} 			&= \frac{F''(S)}{F(S)},
+	\end{aligned}
+$$
+which is solved by an exponential function $F(S) = S^a$ with a constant $a$,
+$$
+	\begin{aligned}
+		 \frac{2(r-M)}{\sigma^2}\cdot \frac{1}{\cancel{S^2}} 			&= \frac{a(a-1)}{\cancel{S^2}}\\
+		 a^2 - a +  \frac{2(M-r)}{\sigma^2} &= 0,
+	\end{aligned}
+$$
+i.e., 
+\begin{equation}
+	a = \frac{1\pm\sqrt{1+8\frac{(r-M)}{\sigma^2}}}{2}
+\end{equation}
+On the other hand,
+$$
+	G(t) = C_G \exp{M t}.
+$$
+
+Finally, from $V(S,t) = F(S)G(t) + g(t)$ we obtain
+$$
+	\begin{aligned}
+			F(S) G'(t) + g'(t) + \frac{1}{2}\sigma^2 S^2 F''(S)G(t) - r F(S)G(t)	+ C\exp{rt}		 &= 0\\
+			g'(t) + C\exp{rt} &= 0\\
+			g'(t) &= -C\exp{rt},
+	\end{aligned}
+$$ 
+and then
+\begin{equation}
+	g(t) = - N \frac{C}{r}\exp{rt},
+\end{equation}
+which implies
+\begin{equation}
+	V(S,t) = S^a  C_G \exp{M t} - N \frac{C}{r}\exp{rt},. 
+\end{equation}
+
+We know that $V(S,T) = \max(F, RS)$, and therefore, for large $S$, $V(S,T) = RS$, i.e., 
+$$
+		V(S,t) = S^a  C_G \exp{M T} - N \frac{C}{r}\exp{rT} = RS,
+$$
+i.e., 
+$$
+	\begin{cases}
+		a &= 1\\
+		C_G \exp{MT} &= 1\\
+		N\frac{C}{r}e^{rT} &= 0
+	\end{cases},
+$$
+from which we obtain that $N = 0$, $C_G = \exp{-MT}$ and $M = r$, i.e., 
+\begin{equation}
+	V(S,t) = S \exp{-r(T-t)}
 \end{equation}

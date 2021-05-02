@@ -8,6 +8,7 @@
 #include "ConvertibleBonds.h"
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 CONV_BONDS::CConvertibleBonds(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma)
 {
@@ -35,7 +36,7 @@ CONV_BONDS::A(double t)
 double
 CONV_BONDS::B(double t)
 {
-    double X_term = 2 * m_X * m_R * exp( -0.5 * (m_r - m_kappar) * (m_T - t) ) * sinh( 0.5 * m_kappar * (m_T -t) );
+    double X_term = 2 * m_X * m_R * exp( - (m_r + 0.5 * m_kappa) * (m_T - t) ) * sinh( 0.5 * m_kappa * (m_T -t) );
     double C_term = - m_C / m_alphar * exp(m_r * t) * ( exp(-m_alphar * m_T) - exp(-m_alphar * t));
     return X_term + C_term;
 }

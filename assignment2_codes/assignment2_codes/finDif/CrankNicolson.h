@@ -6,18 +6,21 @@
 //
 
 #include <vector>
+#include <iostream>
+#include <fstream>
 using namespace std;
 
 #define CN  CCrankNicolson
-#define LU  true
-#define SOR false
+#define LU      1
+#define SOR     2
+#define THOMAS  3
 
 class CCrankNicolson
 {
 public:
     CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, int J, int I);
     // Main functions
-    void convertibleBond(ofstream *output, bool lu, double tol = 1.e-3, double omega = 1.);
+    void convertibleBond(ofstream *output, int method, double tol = 1.e-2, double omega = 1.2);
 private:
     /// Other Functions
     // PDE coefficients
@@ -32,6 +35,7 @@ private:
     // Useful Functions
     double approxPrice(vector<double> &v, vector<double> &s);
     double theta(double t);
+    vector<double> thomasSolve(const vector<double> &a,const vector<double> &b_,const vector<double> &c, vector<double> &d);
     // PARAMETERS
     double m_T;
     double m_F;
