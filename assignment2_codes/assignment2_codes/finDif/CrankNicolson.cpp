@@ -188,7 +188,7 @@ CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, doub
     //    cin >> m_t0;
     m_P = 38.;
     m_t0 = 0.96151;
-    m_iterMax = 100;
+    m_iterMax = 10000;
     m_rho = 1e8;
     //    if (method == PENALTY)
     //    {
@@ -218,7 +218,11 @@ CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, doub
         double approx_t = (i + 0.5) * m_dt;
         /// BOUNDARY CONDITIONS
         // Declare vectors for matrix equations
-        vector<double> a = {0.}, b = {1.}, c = {0.}, d = {convBonds.V_S0(t)};
+        vector<double> a = {0.}, b = {1.}, c = {0.}, d;
+        if (t <= m_t0)
+            d = {max(m_P,convBonds.V_S0(approx_t))};
+        else
+            d = {convBonds.V_S0(approx_t)};
         /// SET UP MATRIX EQUATIONS
         for(int j=1;j< m_J;j++)
         {
@@ -231,9 +235,11 @@ CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, doub
         a.push_back(0.);
         b.push_back(1.);
         c.push_back(0.);
-        d.push_back(convBonds.V_Smax(m_Smax,approx_t));
+        d.push_back(m_R*m_Smax);
         // Temporal restriction
-        if (method == PENALTY){
+        if (method == PENALTY)
+        {
+            int penaltyIt;
             for (int penaltyIt=0; penaltyIt < m_iterMax; penaltyIt++)
             {
                 // Create new vectors containing a copy of the FD approx
@@ -242,24 +248,19 @@ CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, doub
                 for (int j=1; j<m_J; j++)
                 {
                     // If current value suggesta apply penalty, adjust matrix equations
-                    if (vNew[j] < m_R * S[j])
+                    if( vNew[j] < m_R*S[j] )
                     {
-                        bHat[j] = b[j] + m_rho;
-                        dHat[j] = d[j] + m_rho * m_R * S[j];
-                        if (vNew[j] < m_P && t <= m_t0)
-                        {
-                            bHat[j] = bHat[j] + m_rho;
-                            dHat[j] = dHat[j] + m_rho * m_P;
-                        }
+                       bHat[j] = b[j] + m_rho;
+                       dHat[j] = d[j] + m_rho*(m_R*S[j]);
                     }
-                    else
+                    if( t <= m_t0)
                     {
-                        if (vNew[j] < m_P && t <= m_t0)
-                        {
-                            bHat[j] = b[j] + m_rho;
-                            dHat[j] = d[j] + m_rho * m_P;
-                        }
-                    }
+                       if ( vNew[j] < m_P)
+                       {
+                           bHat[j] = bHat[j] + m_rho;
+                           dHat[j] = dHat[j] + m_rho*m_P;
+                       }
+                   }
                     
                 }
                 // Solve with thomas Method
@@ -279,12 +280,13 @@ CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, doub
                     // START_LINE "Solved after " << penaltyIt << " iterations" END_LINE;
                     break;
                 }
-                if(penaltyIt >= m_iterMax)
-                {
-                    PRINT_DATA_LINE("Error NOT converging within required iterations");
-                    throw;
-                }
             }
+            if(penaltyIt >= m_iterMax)
+            {
+                PRINT_DATA_LINE("Error NOT converging within required iterations");
+                throw;
+            }
+            vOld=vNew;
         }  // Ending penalty method
     } // Ending temporal loop
     

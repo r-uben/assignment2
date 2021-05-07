@@ -78,14 +78,13 @@ int main(){
         TASK 2
     */
     
-    Q1 q1(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 300*3, I, J);
-    Q2 q2(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 300*3, I, J);
+    Q1 q1(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 300, I, J);
+    Q2 q2(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 300, I, J);
+    q1.increasingS(500, 500, 300, 1.05);
     q2.increasingS(500, 500, 300, 1.05);
-    //q1.increasingS(500, 500, 300, 1.05);
     vector<double> rs = {0.00585, 0.0117, 0.01755};
-    // q2.variousInterestRates(rs, 300, 300, 200);
-    // q1.fixedS0(17.38, 2, 4, 20000, 16, 4);
-    //q2.fixedS0(17.38, 2, 4, 20000, 16, 4);
+    q2.variousInterestRates(rs, 300, 300, 200);
+    q2.fixedS0(17.38, 2, 4, 20000, 16, 4);
 
 }
 
