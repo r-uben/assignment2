@@ -40,7 +40,7 @@ $
 A_T \overset{\text{\tiny def}}{=} A(T) \to R,
 $ 
 as $S\to\infty$. Hence, 
-\begin{equation}
+\begin{equation}\label{A}
 	A(t) = R\exp{-(\kappa + r)(T-t)}
 \end{equation} 
 
@@ -58,14 +58,10 @@ which implies that (see Appendix \ref{app_ODE_C})
 		C(t) = B_T + {X R}  \left[1 -  \exp{-\kappa(T-t)}\right]- \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]
 	\end{equation}
 
-Therefore, for $S$ sufficiently large we obtain,
+Therefore, for $S$ sufficiently large we obtain (see Appendix \ref{app_ODE_C}),
 	%%% B(t) 
-	\begin{equation}
-		\begin{aligned}
-			B(t) 	&= \left({X R}  \left[1 -  \exp{-\kappa(T-t)}\right]- \frac{C}{r+\alpha}\exp{rT}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\right) \exp{-r(T-t)}\\
-					&= {X R\exp{-r(T-t)}} \left[1 -  \exp{- \kappa (T-t)}\right]- \frac{C}{r+\alpha}\exp{rt}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]\\
-					&= {2X R}\exp{-\left(r+\frac{\kappa}{2}\right)(T-t)}\sinh\left(\frac{\kappa}{2}[T-t]\right)- \frac{C}{r+\alpha}\exp{rt}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]
-		\end{aligned}
+	\begin{equation}\label{B}
+			B(t)  = {2X R}\exp{-\left(r+\frac{\kappa}{2}\right)(T-t)}\sinh\left(\frac{\kappa}{2}[T-t]\right)- \frac{C}{r+\alpha}\exp{rt}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]
 	\end{equation}
 
 Finally,

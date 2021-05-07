@@ -14,4 +14,5 @@ class CGridConstructor{
 public:
     static vector<double>   setupStockPrices(double dS, int J);
     static double           boundaryConditions(int j);
+    static double           lagrangeInterpolation(const vector<double>& y,const vector<double>& x, double x0, unsigned int n);
 };

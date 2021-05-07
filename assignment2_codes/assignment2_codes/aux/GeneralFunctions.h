@@ -17,4 +17,5 @@ public:
     static double maxFunc(double x, double y);
     static double minFunc(double x, double y);
     static double lagInterp(double S, vector<double> p1, vector<double> p2);
+    static string doubleToString(double value, bool integer = false);
 };

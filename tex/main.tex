@@ -1,8 +1,9 @@
 % !TEX encoding = UTF-8 Unicode
-\documentclass{amsart}
+\documentclass[10pt]{amsart}
 
 %%% MY PACKAGE
 \usepackage{mysetup}
+
 \allowdisplaybreaks 
 
 \begin{document}
@@ -17,11 +18,16 @@
 		\input{tasks/intro}
 	
 	%& FIRST TASK: EUROPEAN OPTIONS
-	\newpage
 	\setcounter{secnumdepth}{4}
 	\section{European Options}
-		\input{tasks/task1_eur_op}
-	
+		\subsection{Derivation of boundary condition for large $S$}
+			\input{tasks/Q1/Q1_large_S}
+		\subsection{Crank Nicolson Scheme}
+			\input{tasks/Q1/Q1_CN_scheme}
+		\subsection{Value of the option at $t=0$ as a function of $S$.}
+			\input{tasks/Q1/Q1_beta_and_sigma}
+		\subsection{Value of the option when $S_0=17.38$.}
+			\input{tasks/Q1/Q1_fixedS0}
 	\vspace{1cm}
 	%& SECOND TASK: AMERICAN OPTIONS - EMBEDDED OPTIONS
 	\section{American Options - embedded options}
@@ -34,9 +40,10 @@
 	\renewcommand{\thesubsection}{\Alph{subsection}}
 	\titleformat{\subsection}
 	{\normalfont\large\bfseries}{Appendix \thesubsection.}{0.5em}{}
-	\section*{Appendices}
+	\setcounter{secnumdepth}{0}
+	\section{Appendices}
 	\addcontentsline{toc}{section}{Appendices}
-
+	\setcounter{secnumdepth}{2}
 	%%% THE APPENDIXES
 	%& APPENDIX I: SOLUTION FOR THE ODE FOR C
 	\subsection{Boundary conditions: Solving the ODE to obtain $B(t)$ for large $S$}\label{app_ODE_C}
@@ -51,7 +58,12 @@
 		\input{appendixes/app_coeff_functions}
 		\newpage
 	%& APPENDIX IV: ANALYTIC SOLUTION FOR K = 0 AND BETA = 1
+	\subsection{Finding an analytic solution for $\kappa = 0$ and $\beta = 1$}
 		\input{appendixes/app_analytic_sol}	
+		\newpage
+	%& APPENDIX V: INTERPRETATION OF THE PARAMETERS	
+	%	\input{appendixes/app_parameters}
+	
 	
 		
 

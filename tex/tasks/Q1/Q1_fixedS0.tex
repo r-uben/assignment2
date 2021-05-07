@@ -1,0 +1,94 @@
+In this task we have to find the value of the option when $S_0 = 17.38$, and $\beta = 0.808$ and $\sigma  = 0.66$. To do so, we set a squared-grid, i.e., $\texttt{m_J} = \texttt{m_I} = N$ and obtain different values (first column of the next tables). From a first sight, we can roughly see that the value of the option when $S_0 = 17,38$ is around $42.05$. However we would like to see how much we could improve our result to get more digits of precision. This can be done by increasing $S_{max}$. The idea is to have $S_0$ within the points of the grid, although we can make use of Lagrange Interpolation (of different degrees) to make sure we have a correct result.
+
+\begin{table}[h!]\scriptsize
+	\setlength{\tabcolsep}{15pt}
+	\renewcommand{\arraystretch}{1.2}
+	\begin{tabular}{cccc}
+		N&  $V(S_0,0)$		& 1st Extrapolation & 2nd Extrapolation\\\hline
+		10 &42.4358063642 &42.39718769513333&  \\
+		20 &41.9861956278 &41.836325382333335& 41.756202194790475\\
+		40 &42.0381025279 &42.05540482793334& 42.08670189159048\\
+		80 &42.048554289 &42.05203820936667& 42.05155726385715 \\
+		160 &42.0499738969& 42.05044709953333& 42.050219798128566\\
+		320 &42.049736206700004& 42.04965697663334& 42.049544101933336\\ 
+		640 &42.0494696149& 42.04938075096666& 42.04934129015714\\
+		1280 &42.0494460974& 42.04943825823334& 42.04944647355715\\
+		2560 &42.049419760999996& 42.049410982199994& 42.049407085623805\\ 
+		5120 &42.0494029471 &42.04939734246667& 42.04939539393334\\
+	\end{tabular}
+	\vspace{0.2cm}
+	\captionsetup{width=.55\linewidth}
+	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $2$ and $Smax = 4X$.}\label{table1}
+\end{table}
+
+To improve our result using less iterations, we may try Richardson extrapolation, which gives, from a method of order $p$, an extrapolated result $w_{new}$ which can be found in the second column of the tables and which is given by
+\begin{equation}
+	w_{new} = \frac{2^p v_{new} - v_{old} }{2^p - 1}.
+\end{equation}
+
+This can be repeated a second time in order to get a new extrapolated value. These values can be found in tables \ref{table1}, \ref{table2} and \ref{table3}. As we can see, Table \ref{table1} does not provide more accuracy than 3 digits, $42.049$. It is reasonable because $S_{max}$ is not very large, just $4X$.
+
+\begin{table}[h!]\scriptsize
+	\setlength{\tabcolsep}{15pt}
+	\renewcommand{\arraystretch}{1.2}
+	\begin{tabular}{cccc}
+		N&  $V(S_0,0)$		& 1st Extrapolation & 2nd Extrapolation\\\hline
+		10 &42.5192165706 &40.78479460266667 & \\
+		20 &42.4250637899 &42.39367952966667 &42.62352023352381\\
+		40 &41.9821376404 &41.83449559056666 &41.75461217069523 \\
+		80 &42.0477544635 &42.051578876066664 &42.05118598870476\\
+		320 &42.049666263 &42.0503035295 &42.050121337133334\\
+		640 &42.0496702995 &42.049671645000004 &42.04958137578572 \\
+		1280 &42.0495235312 &42.049474608433336 &42.049446460352385\\ 
+		2560 &42.0495596724 &42.04957171946667 &42.04958559247143\\
+		5120 &42.0495631021 &42.049564245333336 &42.0495631776
+	\end{tabular}
+	\vspace{0.2cm}
+	\captionsetup{width=.55\linewidth}
+	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $2$ and $Smax = 8X$.}\label{table2}
+\end{table}
+By increasing $S_{max}$ to $8X$, we obtain one more digit of precision, $42.0495$ and a slight intuition about the next digit, $42.04955\pm10^{-5}$. On the other hand, although the first extrapolation does not seem to have a great contribution, the second one helps to get the 4th digit. For example, with $N=640$ and $S_{max} = 8X$, $V_(S_0,0) = 42.04967$, and the value after two extrapolatipon is $42.04958$. The first four decimal digits continue to appear when increasing $N$, even without doing extrapolation.
+\begin{table}[h!]\scriptsize
+	\setlength{\tabcolsep}{15pt}
+	\renewcommand{\arraystretch}{1.2}
+	\begin{tabular}{cccc}
+		N&  $V(S_0,0)$		& 1st Extrapolation & 2nd Extrapolation\\\hline	
+		10 &43.2442621282& 40.307115252766664& \\ 
+		20 &42.8593801387& 42.7310861422& 43.07736769783333\\
+		40 &42.2104002673& 41.9940736435& 41.888786143685714 \\
+		80 &42.0892349162& 42.04884646583333& 42.05667115473809 \\
+		160 &42.061258431300004& 42.05193293633334& 42.05237386069048\\
+		320 &42.0507590518& 42.04725925863333& 42.04659159039048\\
+		640 &42.0501694488& 42.049972914466665& 42.050360579585714\\
+		1280& 42.0497430458& 42.04960091146667& 42.04954776818096\\
+		2560& 42.049586893000004& 42.04953484206667& 42.04952540358096\\
+		5120& 42.049572814099996& 42.049568121133326& 42.049572875285705\\
+	\end{tabular} 
+	\vspace{0.2cm}
+	\captionsetup{width=.55\linewidth}
+	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $2$ and $Smax = 12X$.}\label{table3}
+\end{table}
+To sum up, we can see in Table \ref{table4} the best results we've got when using $S_{max}\in\{8X,12X\}$. We can definitely say that $V(S,t=0) \approx 42.095$, and that $V(S,t=0) \approx 42.0956\pm 10^{-5}$. To obtain this result, the fastest way is to use $N=1280$, $S_{max} = 12X$ and two extrapolations.
+\begin{table}[h!]
+	\begin{tabular}{c|cc}
+		 		&  	8X & 12 X\\\hline
+		640 	& 	42.04958 \text{ \small(II)}	& - \\
+		1280 	&	42.04952 \text{ \small(-)}	& 42.04955 \text{ \small(II)}\\
+		2560 	& 	42.04956 \text{ \small(I)}  & 42.04958 \text{ \small(-)}\\
+		5120 	& 	42.04956 \text{ \small(-)}	& 42.04956 \text{ \small(II)}
+	\end{tabular}
+\vspace{0.2cm}
+	\captionsetup{width=.7\linewidth}
+	\caption{Best approximations from Tables \ref{table2} and Table~\ref{table3}. No extrapolation is labelled with (-); one extrapolation with (I); two with (II).}\label{table4}
+\end{table}
+
+Finally, just mentioned that ratios of the differences between values may give us the convergence rate, which is theoretically $O((\Delta t)^2, (\Delta S)^2)$. Since they are the same and we have increases of $2n$, we expect to have ratios around $4$. For example, for $S_{max}$, the ratios we've obtained are given in Table \ref{table5}. As we can see, the ratios are almost always at least $4$, which ensures us the second order convergence (and sometimes higher).
+\begin{table}[h!]\small
+	\setlength{\tabcolsep}{7pt}
+	\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{ccccccccc}\hline
+	0.212569 & 8.180584& 4.71912& 6.00127& 473.628019& 0.0275025& 4.060969& 10.537711& 1.7636139
+\end{tabular}
+\vspace{0.2cm}
+	\caption{Ratios of convergence when $S_{max} = 8X$.}\label{table5}
+\end{table}

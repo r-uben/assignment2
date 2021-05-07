@@ -8,9 +8,12 @@
 #include "ConvertibleBonds.h"
 #include <cmath>
 #include <algorithm>
+#include <vector>
 #include <iostream>
+#include <fstream>
+using namespace std;
 
-CONV_BONDS::CConvertibleBonds(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma)
+CONV_BONDS::CConvertibleBonds(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double Smax, long J, long I)
 {
     m_T         = T;
     m_F         = F;
@@ -25,6 +28,11 @@ CONV_BONDS::CConvertibleBonds(double T, double F, double R, double r, double kap
     m_sigma     = sigma;
     m_kappar    = kappa + r;
     m_alphar    = alpha + r;
+    m_Smax      = Smax;
+    m_J         = J;
+    m_dS        = m_Smax / m_J;
+    m_I         = I;
+    m_dt        = m_T / m_I;
 }
 
 double
@@ -43,7 +51,7 @@ CONV_BONDS::B(double t)
 
 // GENERAL VALUE FUNCTION
 double
-CONV_BONDS::V(double S, double t)
+CONV_BONDS::V_Smax(double S, double t)
 {
     return S * A(t) + B(t);
 }
@@ -55,4 +63,64 @@ CONV_BONDS::V_S0(double t)
     double F_term = m_F * exp( -m_r * (m_T - t) );
     double C_term = m_C / ( m_r + m_alpha ) * exp( -m_alpha * m_T ) * ( exp(m_alpha * (m_T - t)) - exp(-m_r * (m_T - t)) );
     return F_term + C_term;
+}
+
+// PDE COEFFICIENTS
+double
+CONV_BONDS::aFunc(long i, long j)
+{
+    double approx_t     = (i + 0.5) * m_dt;
+    double first_term   = -0.25 * pow(m_sigma, 2.) * pow(j, 2.* m_beta) * pow(m_dS, 2*(m_beta-1));
+    double second_term  =  0.25 * m_kappa * ( theta( approx_t ) / m_dS - j);
+    return first_term + second_term;
+}
+
+double
+CONV_BONDS::bFunc(long i, long j)
+{
+    double long_term = 0.5 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2.*(m_beta-1.));
+    return 1. / m_dt + 0.5 * m_r  + long_term;
+}
+
+double
+CONV_BONDS::cFunc(long i, long j)
+{
+    double approx_t     = (i + 0.5) * m_dt;
+    double first_term   = -0.25 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2.*(m_beta-1.));
+    double second_term  = -0.25 * m_kappa * ( theta( approx_t ) / m_dS - j);
+    return first_term + second_term;
+}
+
+double
+CONV_BONDS::dFunc(long i, long j, vector<double> &v)
+{
+    double approx_t     = (i + 0.5) * m_dt;
+    double a            = aFunc(i, j);
+    double b            = bFunc(i, j);
+    double c            = cFunc(i, j);
+    double d            =  - ( a * v[j-1] + (b - 2 / m_dt) * v[j] + c * v[j+1] ) + m_C * exp(-m_alpha * approx_t);
+    return d;
+}
+
+double
+CONV_BONDS::theta(double t)
+{
+    return (1 + m_mu) * m_X * exp(m_mu * t);
+}
+
+// LU COEFFICIENTS
+double
+CONV_BONDS::betaFunc(long i, long j, double prevBeta)
+{
+    return bFunc(i, j) - (aFunc(i, j) * cFunc(i, j-1)) / prevBeta;
+}
+double
+CONV_BONDS::DFunc(long i, long j, double prevBeta, double d, double prevD)
+{
+    return d - (aFunc(i, j) * prevD) / prevBeta;
+}
+double
+CONV_BONDS::prevV(long i, long j, vector<double> &beta, vector<double> &D, vector<double> &V)
+{
+    return 1 / beta[j] * (D[j] - cFunc(i, j) * V[j+1]);
 }

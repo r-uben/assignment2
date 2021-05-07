@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "8A4F4923-827B-43F7-99EB-46019527358B"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CF670333-2AC3-44C7-94BF-5F58D74BE7FB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "assignment2_codes/aux/PrintMacros.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "DATA_LINE(output, t, args)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "CF670333-2AC3-44C7-94BF-5F58D74BE7FB - 70c4acf947549dee"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "void DATA_LINE&lt;double, double, double, double&gt;(std::__1::basic_ofstream&lt;char, std::__1::char_traits&lt;char&gt; &gt;*, double, double, double, double)"
+                  moduleName = "assignment2_codes"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rubenexojo/Library/Mobile%20Documents/com~apple~CloudDocs/MSc%20Mathematical%20Finance%20-%20Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/assignment2_codes/assignment2_codes/aux/PrintMacros.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "92">
+               </Location>
+               <Location
+                  uuid = "CF670333-2AC3-44C7-94BF-5F58D74BE7FB - ce6900f8ec86aab4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "void DATA_LINE&lt;double, double, double&gt;(std::__1::basic_ofstream&lt;char, std::__1::char_traits&lt;char&gt; &gt;*, double, double, double)"
+                  moduleName = "assignment2_codes"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rubenexojo/Library/Mobile%20Documents/com~apple~CloudDocs/MSc%20Mathematical%20Finance%20-%20Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/assignment2_codes/assignment2_codes/aux/PrintMacros.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "82">
+               </Location>
+               <Location
+                  uuid = "CF670333-2AC3-44C7-94BF-5F58D74BE7FB - 3b1474f70651900c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "void DATA_LINE&lt;double, double&gt;(std::__1::basic_ofstream&lt;char, std::__1::char_traits&lt;char&gt; &gt;*, double, double)"
+                  moduleName = "assignment2_codes"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/rubenexojo/Library/Mobile%20Documents/com~apple~CloudDocs/MSc%20Mathematical%20Finance%20-%20Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/assignment2_codes/assignment2_codes/aux/PrintMacros.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "47"
+                  endingLineNumber = "47"
+                  offsetFromSymbolStart = "72">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C1AB5DC2-6032-4EA8-9C44-7FAE2E90CA6E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "assignment2_codes/finDif/aux/ConvertibleBonds.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "CConvertibleBonds"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C9B776BC-8ED0-4BD4-8705-EC98FDB3CEAE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "assignment2_codes/finDif/CrankNicolson.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "CCrankNicolson"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "47BDA674-8070-4718-AD99-574456CD0BFD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "assignment2_codes/finDif/aux/ConvertibleBonds.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "CConvertibleBonds"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

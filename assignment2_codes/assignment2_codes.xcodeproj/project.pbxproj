@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3013BD152645933D0026E7C4 /* Q2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3013BD132645933D0026E7C4 /* Q2.cpp */; };
+		30868CC62644136F009374E7 /* Q1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30868CC42644136F009374E7 /* Q1.cpp */; };
 		309B380E2639A1510041F884 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 309B380D2639A1510041F884 /* main.cpp */; };
 		309B38172639A4270041F884 /* Convertiblebonds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 309B38152639A4270041F884 /* Convertiblebonds.cpp */; };
 		309B381B2639B1140041F884 /* CrankNicolson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 309B38192639B1140041F884 /* CrankNicolson.cpp */; };
@@ -28,7 +30,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3013BD132645933D0026E7C4 /* Q2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Q2.cpp; sourceTree = "<group>"; };
+		3013BD142645933D0026E7C4 /* Q2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Q2.h; sourceTree = "<group>"; };
 		304A50B8263C416900854086 /* OpenDocuments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenDocuments.h; sourceTree = "<group>"; };
+		30868CC42644136F009374E7 /* Q1.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Q1.cpp; sourceTree = "<group>"; };
+		30868CC52644136F009374E7 /* Q1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Q1.h; sourceTree = "<group>"; };
 		309B380A2639A1510041F884 /* assignment2_codes */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = assignment2_codes; sourceTree = BUILT_PRODUCTS_DIR; };
 		309B380D2639A1510041F884 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		309B38152639A4270041F884 /* Convertiblebonds.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Convertiblebonds.cpp; sourceTree = "<group>"; };
@@ -55,6 +61,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		30868CC326441360009374E7 /* tasks */ = {
+			isa = PBXGroup;
+			children = (
+				30868CC42644136F009374E7 /* Q1.cpp */,
+				30868CC52644136F009374E7 /* Q1.h */,
+				3013BD132645933D0026E7C4 /* Q2.cpp */,
+				3013BD142645933D0026E7C4 /* Q2.h */,
+			);
+			path = tasks;
+			sourceTree = "<group>";
+		};
 		309B38012639A1510041F884 = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +112,7 @@
 		309B38182639B0C90041F884 /* finDif */ = {
 			isa = PBXGroup;
 			children = (
+				30868CC326441360009374E7 /* tasks */,
 				309B38252639B28A0041F884 /* aux */,
 				309B38192639B1140041F884 /* CrankNicolson.cpp */,
 				309B381A2639B1140041F884 /* CrankNicolson.h */,
@@ -173,9 +191,11 @@
 			files = (
 				309B38282639B2970041F884 /* GridConstructor.cpp in Sources */,
 				309B381E2639B1CA0041F884 /* GeneralFunctions.cpp in Sources */,
+				3013BD152645933D0026E7C4 /* Q2.cpp in Sources */,
 				309B381B2639B1140041F884 /* CrankNicolson.cpp in Sources */,
 				309B38212639B20F0041F884 /* PayoffFunctions.cpp in Sources */,
 				309B38172639A4270041F884 /* Convertiblebonds.cpp in Sources */,
+				30868CC62644136F009374E7 /* Q1.cpp in Sources */,
 				309B380E2639A1510041F884 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
