@@ -16,7 +16,8 @@ public:
     // Main functions
     void increasingS(int I, int J, int iterMax, double gap = 1.1, double r = 0);
     void variousInterestRates(vector<double> &rs, int I, int J, int iterMax, double gap = 1.1);
-    void fixedS0(double S0, double increment, int nMin, int nMax, int deg, int timesX);
+    void V_fixedS0(double S0, double t0, int deg, int timesX, int I, int J);
+    void variousV_fixedS0(double S0, double t0, double increment, int nMin, int nMax, int deg, int timesX);
 private:
     //
     string doubleToString(double value, bool integer = false);

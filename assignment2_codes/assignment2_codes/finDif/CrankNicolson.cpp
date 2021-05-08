@@ -42,7 +42,7 @@ using namespace std;
 /// In option pricing problems, we must for S over the semi infinite domain, therefore numerically we need to choose an appropiate Smax
 /// The first five parameters are intrinsice option parameters, whilst the last three ones are those appropriate parameters for the method.
 
-CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, int J, int I){
+CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, long I, long J1, long J2){
     m_T         = T;
     m_F         = F;
     m_R         = R;
@@ -56,13 +56,17 @@ CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double 
     m_sigma     = sigma;
     m_kappar    = kappa + r;
     m_alphar    = alpha + r;
-    m_S0    = S0;
-    m_Smax  = Smax;
-    m_J     = J;
-    m_I     = I;
-    m_dS    = m_Smax / J;
-    m_dt    = m_T / I;
-    m_jStar = m_S0/m_dS;
+    m_S0        = S0;
+    m_Smax      = Smax;
+    m_J1        = J1 + J2
+    m_J2        = J2;
+    m_J         = J1 + J2;
+    m_I         = I;
+    m_dS1       = m_Smax / J1;
+    m_dS2       = m_Smax / J1;
+    m_dS       = m_Smax / J1;
+    m_dt        = m_T / I;
+    m_jStar     = m_S0/m_dS;
 }
 void
 CN::eurConvertibleBond(ofstream *output, int method, int degree, double tol, double omega)
@@ -180,23 +184,14 @@ CN::eurConvertibleBond(ofstream *output, int method, int degree, double tol, dou
 }
 
 void
-CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, double omega)
+CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, double tol)
 {
-    //    cout << "Price for the put option: ";
-    //    cin >> m_P;
-    //    cout << "Until what time the option is early exercisable?: ";
-    //    cin >> m_t0;
+
     m_P = 38.;
     m_t0 = 0.96151;
-    m_iterMax = 10000;
+    m_iterMax = 1000;
     m_rho = 1e8;
-    //    if (method == PENALTY)
-    //    {
-    //        cout << "Number of iterations of the Penalty Method: ";
-    //        cin >> m_iterMax;
-    //        cout << "Penalty parameter: ";
-    //        cin >> m_rho;
-    //    }
+
     
     // CONVERTIBLE BONDS LIBRARY
     CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_J, m_I);
@@ -215,11 +210,11 @@ CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, doub
     for(long i=m_I-1; i>=0; i--)
     {
         double t        = i*m_dt;
-        double approx_t = (i + 0.5) * m_dt;
+        double approx_t = (i + 0.5251) * m_dt;
         /// BOUNDARY CONDITIONS
         // Declare vectors for matrix equations
         vector<double> a = {0.}, b = {1.}, c = {0.}, d;
-        if (t <= m_t0)
+        if (approx_t <= m_t0)
             d = {max(m_P,convBonds.V_S0(approx_t))};
         else
             d = {convBonds.V_S0(approx_t)};
@@ -235,68 +230,66 @@ CN::amConvertibleBond(ofstream *output, int method, int degree, double tol, doub
         a.push_back(0.);
         b.push_back(1.);
         c.push_back(0.);
+        // d.push_back(convBonds.V_Smax(m_Smax,approx_t));
         d.push_back(m_R*m_Smax);
         // Temporal restriction
-        if (method == PENALTY)
+        int penaltyIt = 0;
+        for (int penaltyIt; penaltyIt < m_iterMax; penaltyIt++)
         {
-            int penaltyIt;
-            for (int penaltyIt=0; penaltyIt < m_iterMax; penaltyIt++)
+            // Create new vectors containing a copy of the FD approx
+            vector<double> aHat(a), bHat(b), cHat(c), dHat(d);
+            // Apply penalty here to finite difference scheme
+            for (int j=1; j<m_J; j++)
             {
-                // Create new vectors containing a copy of the FD approx
-                vector<double> aHat(a), bHat(b), cHat(c), dHat(d);
-                // Apply penalty here to finite difference scheme
-                for (int j=1; j<m_J; j++)
+                // If current value suggesta apply penalty, adjust matrix equations
+                if(vNew[j] < m_R*S[j])
                 {
-                    // If current value suggesta apply penalty, adjust matrix equations
-                    if( vNew[j] < m_R*S[j] )
-                    {
-                       bHat[j] = b[j] + m_rho;
-                       dHat[j] = d[j] + m_rho*(m_R*S[j]);
-                    }
-                    if( t <= m_t0)
-                    {
-                       if ( vNew[j] < m_P)
-                       {
-                           bHat[j] = bHat[j] + m_rho;
-                           dHat[j] = dHat[j] + m_rho*m_P;
-                       }
-                   }
-                    
+                   bHat[j] = b[j] + m_rho;
+                   dHat[j] = d[j] + m_rho*(m_R*S[j]);
                 }
-                // Solve with thomas Method
-                vector <double> y = thomasSolve(aHat, bHat, cHat, dHat);
-                // y now contains next guess at solution
-                // Check for differences between vNew and y
-                double error = 0.;
-                for (int j=0; j<= m_J; j++)
+                if(approx_t < m_t0 && vNew[j] < m_P)
                 {
-                    error += (vNew[j] - y[j])*(vNew[j] - y[j]);
-                }
-                // Update Value of vNew
-                vNew = y;
-                // make an exit condition when solution is converged
-                if (error < tol * tol)
-                {
-                    // START_LINE "Solved after " << penaltyIt << " iterations" END_LINE;
-                    break;
-                }
+                   bHat[j] = bHat[j] + m_rho;
+                   dHat[j] = dHat[j] + m_rho*m_P;
+               }
+                
             }
-            if(penaltyIt >= m_iterMax)
+            // Solve with thomas Method
+            vector <double> y = thomasSolve(aHat, bHat, cHat, dHat);
+            // y now contains next guess at solution
+            // Check for differences between vNew and y
+            double error = 0.;
+            for (int j=0; j<= m_J; j++)
             {
-                PRINT_DATA_LINE("Error NOT converging within required iterations");
-                throw;
+                error += (vNew[j] - y[j])*(vNew[j] - y[j]);
             }
-            vOld=vNew;
-        }  // Ending penalty method
+            // Update Value of vNew
+            vNew = y;
+            // make an exit condition when solution is converged
+            if (error < tol * tol)
+            {
+                // START_LINE "Solved after " << penaltyIt << " iterations" END_LINE;
+                break;
+            }
+        }
+        if(penaltyIt >= m_iterMax)
+        {
+            PRINT_DATA_LINE("Error NOT converging within required iterations");
+            throw;
+        }
+        vOld=vNew;
     } // Ending temporal loop
     
     // Finish looping through time levels
     // output the estimated option price
-    double optionValue = GRID::lagrangeInterpolation(vNew, S, m_S0, degree);//approxPrice(vNew, S);
+    m_optionValue = GRID::lagrangeInterpolation(vNew, S, m_S0, degree);//approxPrice(vNew, S);
     // output the estimated option price
     double asympV = m_S0*convBonds.A(0) + convBonds.B(0);
-    DATA_LINE(output, m_F, m_I, m_J, m_S0, optionValue, asympV);
-    PRINT_DATA_LINE(m_F, m_I, m_J, m_S0, optionValue, asympV);
+    if (saveData == SAVE)
+    {
+        DATA_LINE(output, m_F, m_I, m_J, m_S0, m_optionValue, asympV);
+    }
+    PRINT_DATA_LINE(m_F, m_I, m_J, m_S0, m_optionValue, asympV);
 }
 
 

@@ -23,10 +23,10 @@ public:
     double A(double t);
     double B(double t);
     // COEFFICIENTS FOR THE PDE
-    double aFunc(long i, long j);
-    double bFunc(long i, long j);
-    double cFunc(long i, long j);
-    double dFunc(long i, long j, vector<double> &v);
+    double aFunc(long i, long j, double dS = 0);
+    double bFunc(long i, long j, double dS = 0);
+    double cFunc(long i, long j, double dS = 0);
+    double dFunc(long i, long j, vector<double> &v, double dS = 0);
     double theta(double t);
     // LU coefficients
     double betaFunc(long i, long j, double prevBeta);

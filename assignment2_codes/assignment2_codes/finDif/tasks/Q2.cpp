@@ -13,6 +13,20 @@
 #include "CrankNicolson.h"
 #include "GeneralFunctions.h"
 
+// To calculate the time
+#include <chrono>
+#define  CHRONO   std::chrono
+#define  SET_TIME CHRONO::system_clock::now()
+#define  START_TIME CHRONO::system_clock::now()
+#define  END_TIME CHRONO::system_clock::now()
+#define  DURATION CHRONO::duration
+#define  MILLI    std::milli
+
+// To keep results
+
+#define COMMA << "," <<
+#define END_LINE << endl;
+
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -49,7 +63,7 @@ Q2::increasingS(int I, int J, int iterMax, double gap, double r)
         for (double S = 2; S < iterMax; S*=gap)
         {
             CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S, m_Smax, J, I);
-            crank.amConvertibleBond(&output, PENALTY);
+            crank.amConvertibleBond_penalty(&output,2);
         }
         output.close();
     }
@@ -62,7 +76,7 @@ Q2::increasingS(int I, int J, int iterMax, double gap, double r)
         for (double S = 2; S < iterMax; S*=gap)
         {
             CN crank(m_T, m_F, m_R, r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S, m_Smax, J, I);
-            crank.amConvertibleBond(&output, PENALTY);
+            crank.amConvertibleBond_penalty(&output, 2);
         }
         output.close();
     }
@@ -75,16 +89,47 @@ Q2::variousInterestRates(vector<double> &rs, int I, int J, int iterMax, double g
 }
 
 void
-Q2::fixedS0(double S0, double increment, int nMin, int nMax, int deg, int timesX)
+Q2::variousV_fixedS0(double S0, double t0, double increment, int nMin, int nMax, int deg, int timesX)
 {
     ofstream output;
-    string strDeg = AUX::doubleToString(deg, true);
-    string strSmax= AUX::doubleToString(timesX, true);
+    // Convert the integers into strings to name the document
+    string strDeg = to_string(deg);
+    string strSmax= to_string(timesX);
+    // Open the document in order to keep results
     output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task2/amConvBondValues_increasing_iMax_and_jMax_deg" + strDeg + "_Smax" + strSmax + "X.csv");
+    // First Line of the .csv file to further get columns of data
     output << "F,I,J,S,V,VtoInf" << endl;
+    // Iteration on the size of the grid. I and J are conveniently chosen in order to have S0 and t0 on the grid
+    // or close to the grid.
     for (int n=nMin; n<=nMax; n*=increment)
     {
-        CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, timesX * m_X, n, n);
-        crank.amConvertibleBond(&output, PENALTY, deg);
+        // Produce and keep results
+        CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, timesX * m_X, n, n/2 * ceil(m_T / t0));
+        crank.amConvertibleBond_penalty(&output, deg);
     }
+}
+
+void
+Q2::V_fixedS0(double S0, double t0, int deg, int timesX, int I, int J)
+{
+    // Convert the integers into strings to name the document
+    ofstream output;
+    // Open the document in order to keep results
+    string strDeg = to_string(deg);
+    string strSmax= to_string(timesX);
+    output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task2/amConvBondValue_" + strSmax + "X_deg" + strDeg + "_I" + to_string(I) + "_J" + to_string(J) + "_timing.csv");
+    // First Line of the .csv file to further get columns of data
+    output << "I,J,V,time" << endl;
+    // Keep the time of inisiation of the Crank Nicolson method
+    auto start = START_TIME;
+    // Produce results
+    CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, timesX * m_X, J, I);
+    crank.amConvertibleBond_penalty(&output, deg, DONT_SAVE);
+    double optionValue = crank.GetV();
+    // Keep the time of the end of the Crank Nicolson method
+    auto end = END_TIME;
+    // Duration: end - start
+    DURATION<float> duration = (end - start);
+    output << I COMMA J COMMA optionValue COMMA duration.count() END_LINE
+    cout << "Our result has been obtained in " << duration.count() << "s" << endl;
 }

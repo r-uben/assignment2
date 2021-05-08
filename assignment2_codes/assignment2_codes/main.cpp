@@ -12,6 +12,13 @@
 #include <iostream>
 #include <fstream>
 
+// To calculate the time
+#include <chrono>
+#define  CHRONO   std::chrono
+#define  SET_TIME CHRONO::system_clock::now()
+#define  DURATION CHRONO::duration
+#define  MILLI    std::milli
+
 #define NEXT_CASE cout << "#######" << endl;
 
 using namespace std;
@@ -37,41 +44,46 @@ int main(){
     ///
     /// FIXING BETA AND MOVING SIGMA
     ///
-    // vector <double> sigmas = {0, 0.381, 0.66, 0.802, 0.962, 1};
-    // q1.variousSigmas(sigmas, THOMAS);
+        
+        // vector <double> sigmas = {0, 0.381, 0.66, 0.802, 0.962, 1};
+        // q1.variousSigmas(sigmas, THOMAS);
     
     ///
     /// FIXING SIGMA AND MOVING BETA
     ///
-    // vector <double> betas = {0.892};
-    // q1.variousBetas(betas, THOMAS);
+        
+        // vector <double> betas = {0.892};
+        // q1.variousBetas(betas, THOMAS);
     
     ///
     /// FIXING SIGMA AND AND BETA AND MOVING KAPPA
     ///
-    // vector <double> kappas = {0, 0.02, 0.0833, 0.2, 0.5, 1};
-    // q1.variousKappas(kappas, THOMAS);
+    
+        // vector <double> kappas = {0, 0.02, 0.0833, 0.2, 0.5, 1};
+        // q1.variousKappas(kappas, THOMAS);
+    
     
     ///
     /// INCREASING IMAX AND JMAX (SQUARE) AND FIXING SMAX
     ///
-    //    q1.fixedS0(17.38, 2, 4, 20000, 2, 4);
-    //    q1.fixedS0(17.38, 2, 4, 20000, 3, 4);
-    //    q1.fixedS0(17.38, 2, 4, 20000, 4, 4);
-    //    q1.fixedS0(17.38, 2, 4, 20000, 8, 4);
-    //    q1.fixedS0(17.38, 2, 4, 20000, 16, 4);
-    //
-    //    q1.fixedS0(17.38, 2, 6, 20000, 2, 6);
-    //    q1.fixedS0(17.38, 2, 6, 20000, 3, 6);
-    //    q1.fixedS0(17.38, 2, 6, 20000, 4, 6);
-    //    q1.fixedS0(17.38, 2, 6, 20000, 8, 6);
-    //    q1.fixedS0(17.38, 2, 6, 20000, 16, 6);
-    //
-    //    q1.fixedS0(17.38, 2, 8, 20000, 2, 8);
-    //    q1.fixedS0(17.38, 2, 8, 20000, 3, 8);
-    //    q1.fixedS0(17.38, 2, 8, 20000, 4, 8);
-    //    q1.fixedS0(17.38, 2, 8, 20000, 8, 8);
-    //    q1.fixedS0(17.38, 2, 8, 20000, 16, 8);
+    
+        //    q1.fixedS0(17.38, 2, 4, 20000, 2, 4);
+        //    q1.fixedS0(17.38, 2, 4, 20000, 3, 4);
+        //    q1.fixedS0(17.38, 2, 4, 20000, 4, 4);
+        //    q1.fixedS0(17.38, 2, 4, 20000, 8, 4);
+        //    q1.fixedS0(17.38, 2, 4, 20000, 16, 4);
+        //
+        //    q1.fixedS0(17.38, 2, 6, 20000, 2, 6);
+        //    q1.fixedS0(17.38, 2, 6, 20000, 3, 6);
+        //    q1.fixedS0(17.38, 2, 6, 20000, 4, 6);
+        //    q1.fixedS0(17.38, 2, 6, 20000, 8, 6);
+        //    q1.fixedS0(17.38, 2, 6, 20000, 16, 6);
+        //
+        //    q1.fixedS0(17.38, 2, 8, 20000, 2, 8);
+        //    q1.fixedS0(17.38, 2, 8, 20000, 3, 8);
+        //    q1.fixedS0(17.38, 2, 8, 20000, 4, 8);
+        //    q1.fixedS0(17.38, 2, 8, 20000, 8, 8);
+        //    q1.fixedS0(17.38, 2, 8, 20000, 16, 8);
 
     
     /*
@@ -80,12 +92,16 @@ int main(){
     
     Q1 q1(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 300, I, J);
     Q2 q2(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 300, I, J);
-    q1.increasingS(500, 500, 300, 1.05);
-    q2.increasingS(500, 500, 300, 1.05);
-    vector<double> rs = {0.00585, 0.0117, 0.01755};
-    q2.variousInterestRates(rs, 300, 300, 200);
-    q2.fixedS0(17.38, 2, 4, 20000, 16, 4);
-
+//    q1.increasingS(500, 500, 300, 1.05);
+//    q2.increasingS(100, 100, 200, 1.05);
+//    q2.increasingS(200, 200, 200, 1.05);
+//    vector<double> rs = {0.00585, 0.0117, 0.01755};
+//    q2.variousInterestRates(rs, 300, 300, 200);
+    q2.variousV_fixedS0(17.38, 0.96151, 2, 2, 40000, 16, 8.);
+//    q2.V_fixedS0(17.38, 0.96151, 16, 8., 256, 128);
+    return 0;
+    
+    
 }
 
 
