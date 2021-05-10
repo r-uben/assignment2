@@ -184,8 +184,8 @@ CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, doubl
 
     m_P = 38.;
     m_t0 = 0.96151;
-    m_iterMax = 30000;
-    m_rho = 1e13;
+    m_iterMax = 1000;
+    m_rho = 1e8;
     
     // CONVERTIBLE BONDS LIBRARY
     CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_I, m_J);

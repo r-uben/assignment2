@@ -1,5 +1,5 @@
-In order to find the value of the contract with an embedded put option, we have decided to use the Penalty Method. This method consists in adding a ``pushing'' term in the PDE (\ref{general_pde}), which in our case depends on two conditions that must be satisfied due to the proper definition of our contract. Briefly speaking, this term pushes back toward the exercise value when it's crossed. Moreover, since in our case $b_j > 0$ by definition, then this term must be positive. The code consists in creating new vectors $\texttt{aHat(a)}$, $\texttt{bHat(b)}$, $\texttt{cHat(c)}$, $\texttt{dHat(d)}$, update them with the code given in Figure \ref{codePenalty}, and find $\texttt{y = thomasSolve(aHat,bHat,cHat,dHat)}$ in order to get the new $\texttt{vNew}$ (more details can be found in the Appendix \ref{app_code}).
-\vspace{-0.5cm}
+In order to find the value of the contract with an embedded put option, we have decided to use the Penalty Method. This method consists in adding a ``pushing'' term in the PDE (\ref{general_pde}), which in our case depends on two conditions that must be satisfied due to the proper definition of our contract. Briefly speaking, this term pushes back toward the exercise value when it's crossed. Moreover, since in our case $b_j > 0$ by definition, then this term must be positive. The code consists in creating new vectors $\texttt{aHat(a)}$, $\texttt{bHat(b)}$, $\texttt{cHat(c)}$, $\texttt{dHat(d)}$, update them with the code given in Figure \ref{codePenalty}, and find $\texttt{y = thomasSolve(aHat,bHat,cHat,dHat)}$ in order to get the new $\texttt{vNew}$ (more details can be found in the Appendix \ref{app_code}). We have chosen $\rho=10^{8}$ and a maximum of 1000 iterations.
+\vspace{-1.2cm}
 \begin{figure}[h!]
 \begin{lstlisting}
 	if(vNew[j] < m_R*S[j])
@@ -15,4 +15,4 @@ In order to find the value of the contract with an embedded put option, we have 
 \end{lstlisting}
 \captionsetup{width=.6\linewidth}
 \caption{Code lines for the ppenalty method conditions which update the \texttt{a}, \texttt{b}, \texttt{c}, \texttt{d} coefficients of Crank Nicolson scheme.}\label{codePenalty}
-\end{figure}
+\end{figure}\vspace{-0.22cm}

@@ -1,4 +1,4 @@
-In this section we are trying to find the most possible accurate value for $V(17.38,0)$ and further obtain in less than one second. To do so, we are going to repeat the same procedure than in Section 1, that is, increase $I$ and $J$ in order to study the convergence rate of Crack Nicolson method in our particular situation, which is \textit{a priori} $\mathcal{O}\left((\Delta S)^2, (\Delta t)^2\right)$. The main difference here is that not only we must try to get $S_0$ within the (vertical) grid points to reduce eventual interpolation errors but also $t_0 = 0.96151$ (within the horizontal axis). 
+In this section we are trying to find the most accurate value for $V(17.38,0)$ that we could get and further obtain it in less than one second. To do so, we are going to repeat the same procedure than in Section 1, that is, increase $I$ and $J$ in order to study the convergence rate of Crack Nicolson method in our particular situation, which is \textit{a priori} $\mathcal{O}\left((\Delta S)^2, (\Delta t)^2\right)$. The main difference here is that not only we must try to get $S_0$ within the (vertical) grid points to reduce eventual interpolation errors but also $t_0 = 0.96151$ (within the horizontal axis). 
 \begin{table}[h!]\scriptsize
 	\setlength{\tabcolsep}{15pt}
 	\renewcommand{\arraystretch}{1.2}
@@ -19,12 +19,12 @@ In this section we are trying to find the most possible accurate value for $V(17
 	\captionsetup{width=.5\linewidth}
 	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $16$ and $S_{max} = 8X$.}\label{table6}
 \end{table}
-To do so, we must note that there must exist two integers $j^*$ and $i^*$ such that $j^* \texttt{m_dS = S0}$ and $i^* \texttt{m_dt = t_0}$. This implies that $\texttt{m_J} = j^* \texttt{Smax / S0}$ and $\texttt{m_I} = i^* \texttt{T} / t_0$. In our case, $X = S_0$, so we can set $\texttt{Smax = k*X}$ for some integer $k$, and therefore $\texttt{m_J} = \texttt{n * ceil(Smax/S0) = n*k}$, for any integer $\texttt{n}$. We have not such a relation between $\texttt{T}$ and $t_0$, because it's fixed. Therefore, set $\texttt{m_I} =  \texttt{n * ceil(\texttt{T}/t_0)}$, and, although it might not be exactly on the grid, it would not be very far from being on it. Hence, we can try a loop $\texttt{for (int n=nMin; n<=nMax; n*=2)}$ in order to get the Table \ref{table6}.
+We must note that there must exist two integers $j^*$ and $i^*$ such that $j^* \texttt{m_dS = S0}$ and $i^* \texttt{m_dt = t0}$. This implies that $\texttt{m_J} = j^* \texttt{Smax / S0}$ and $\texttt{m_I} = i^* \texttt{m_T/t0}$. In our case, $X = S_0$, so we can set $\texttt{Smax = k*X}$ for some integer $k$, and therefore $\texttt{m_J} = \texttt{n*ceil(Smax/S0) = n*k}$, for any integer $\texttt{n}$. We have not such a relation between $\texttt{T}$ and $t_0$, because it's fixed. Therefore, set $\texttt{m_I} =  \texttt{n*ceil(\texttt{T}/t_0)}$, and, although it might not be exactly on the grid, it would not be very far from being on it. Hence, we can try a loop $\texttt{for (int n=nMin; n<=nMax; n*=2)}$ in order to get the Table \ref{table6} (for more details, see \texttt{Q2.cpp} within Appendix \ref{app_code}).
 
-As we can see in this table, the ratio of the convergence\footnote{We increase $n$ by doubling it each lap. Since the convergence is $\mathcal{O}\left((\Delta S)^2, (\Delta t)^2\right)$, if we double $n$, the value would increase as a ratio of $4$ with respect to the previous difference, i.e., if we take three values $v_m, v_{2m}, v_{4m}$ with $m\equiv 0  \text{ mod } n$,then
+As we can see in this table, the convergence ratio\footnote{We increase $n$ by doubling it each lap. Since the convergence is $\mathcal{O}\left((\Delta S)^2, (\Delta t)^2\right)$, if we double $n$, the value would increase as a ratio of $4$ with respect to the previous difference, i.e., if we take three values $v_m, v_{2m}, v_{4m}$ with $m\equiv 0  \text{ mod } n$, then
 $$
 	\frac{v_{2n} - v_{n}}{v_{4n} - v_{2n}}\approx 2^2 = 4.
-$$} is around $2$, although the monotony is pointly broken. It may be caused by a higher disparity between the new result and the previous one (the greater the denominator, the smaller the result). On the contrary, we get 5 or 6 when the values are similar (opposite~situation). Nevertheless, the ratios are around $4$, so we can explore using Richardson extrapolation ($p=2$) to see whether we can improve our results with less iterations.
+$$} is around $4$, although the monotony is pointly broken. It may be caused by a higher disparity between the new result and the previous one (the greater the denominator, the smaller the result). On the contrary, we get 5 or 6 when the values are similar (opposite~situation). Nevertheless, the ratios are around $4$, so we can explore using Richardson extrapolation ($p=2$) to see whether we can improve our results with less iterations, even if we would not expect to see the best performance of Richardson's method.
 
 Generally speaking, we can see that $V(S_0,0)$ converges to $43.2337\pm10^{-4}$, i.e., we can only ensure three digits of precision (in a reasonable time), i.e., $V(S_0,0)\approx 42.233$. On the other hand, as we can see in Table \ref{table6}, we just need to run our code for $\texttt{(m_I, m_J)} = (128, 64)$ and $\texttt{(m_I, m_J)} = (256, 128)$. 
 
@@ -36,12 +36,13 @@ Generally speaking, we can see that $V(S_0,0)$ converges to $43.2337\pm10^{-4}$,
 		$\texttt{m_I}$ & $\texttt{m_J}$& $V(S_0,0)$ & Time (s)\\ \hline\addlinespace[0.2cm]
 		128 &   64 & 43.18821969729999 &  0.0107786  \\
 		256 &   128 & 43.2219325264 &  0.039997  \\\addlinespace[0.2cm]\hline\hline\addlinespace[0.1cm]
-		\multicolumn{2}{c}{Extrap. Value} & 43.23317013610001 & $9.999 \times 10^{-6}$ \\\addlinespace[0.1cm]\hline\hline
+		\multicolumn{2}{c}{Extrap. Value} & 43.23317013610001 & $9.999 \times 10^{-6}$ \\\addlinespace[0.1cm]\hline\hline\addlinespace[0.1cm]
+		4096 & 2048 &  43.233638732399996 & 34.14775s
 	\end{tabular}
 	\vspace{0.4cm}
 	\captionsetup{width=.5\linewidth}
 	\caption{Obtaining $V(S_0,0)$ with three digits of precision in less than one second.}\label{table7}
 \end{table}
 \vspace{-0.6cm}
-The extrapolated value has been obtain by a simple code which can be found in \texttt{GeneralFunctions.cpp}. Doing that, we obtaing that $V(S_0,0)\approx 42.233$ in 0.05758599 s.
+The extrapolated value has been obtain by a simple code which can be found in \texttt{GeneralFunctions.cpp}. Doing that, we obtaing that $V(S_0,0)\approx 42.233$ in 0.05758599s, much more less than the 34s when using $(I,J)=(4096,2048)$. To conclude, it may be good to note that whilst the third digit starts to being stable when $(I,J)=(2048,1024)$, when doing extrapolation we can reduce it to $(I,J) = (128 + 256,64+128) = (384,192)$ (values like $43.2328$ or $43.23248$ are approximated by $43.233$ when using only three decimal digits).
 

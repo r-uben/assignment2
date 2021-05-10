@@ -3,9 +3,6 @@
 
 %%% MY PACKAGE
 \usepackage{mysetup}
-\usepackage{multirow}
-\usepackage{booktabs}
-\allowdisplaybreaks 
 
 \begin{document}
 	
@@ -43,39 +40,36 @@
 			\input{tasks/Q2/Q2_fixedS0}
 				
 	%& APPENDIXES
-	%%% SETTING EVERYTHING
-	\renewcommand{\thesubsection}{\Alph{subsection}}
-	\titleformat{\subsection}
-	{\normalfont\large\bfseries}{Appendix \thesubsection.}{0.5em}{}
-	\titleformat{\subsubsection}
-	{\normalfont\normalsize}{Appendix \thesubsubsection}{1em}{}
+		%%% SETTING EVERYTHING
+		\renewcommand{\thesubsection}{\Alph{subsection}}
+		\titleformat{\subsection}
+		{\normalfont\large\bfseries}{Appendix \thesubsection.}{0.5em}{}
+		\titleformat{\subsubsection}
+		{\normalfont\normalsize}{Appendix \thesubsubsection}{1em}{}
 	\newpage
 	\setcounter{secnumdepth}{0}
 	\section{Appendices}
-	\setcounter{secnumdepth}{4}
-	\setcounter{tocdepth}{6}
-	\setcounter{subsection}{0}
-	%%% THE APPENDIXES
-	%& APPENDIX I: SOLUTION FOR THE ODE FOR C
-	\subsection{Boundary conditions: Solving the ODE to obtain $B(t)$ for large $S$}\label{app_ODE_C}
-		\input{appendixes/app_solving_C_ode}
-		\newpage
-	%& APPENDIX II: VALUE FUNCTION WHEN S=0
-	\subsection{Boundary conditions: Value function when $S=0$}\label{app_bound_V_S0}
-		\input{appendixes/app_V_S0}
-		\newpage
-	%& APPENDIX III: DERIVATION OF THE COEFFICIENT FUNCTIONS
-	\subsection{Approximation of the coefficients for the Crank-Nicolson method}\label{app_coeff_CrankNic}
-		\input{appendixes/app_coeff_functions}
-		\newpage
-	%& APPENDIX IV: ANALYTIC SOLUTION FOR K = 0 AND BETA = 1
-	\subsection{Finding an analytic solution for $\kappa = 0$ and $\beta = 1$}
-		\input{appendixes/app_analytic_sol}	
-		\newpage
-	%& APPENDIX V: CODE
-	\subsection{Code}	\label{app_code}
-		\input{appendixes/app_code}	
-	%	\input{appendixes/app_parameters}
+	%%% COUNTERS
+		\setcounter{secnumdepth}{4}
+		\setcounter{tocdepth}{6}
+		\setcounter{subsection}{0}
+		%%% THE APPENDIXES
+		%& APPENDIX I: SOLUTION FOR THE ODE FOR C
+		\subsection{Boundary conditions: Solving the ODE to obtain $B(t)$ for large $S$}\label{app_ODE_C}
+			\input{appendixes/app_solving_C_ode}
+			\newpage
+		%& APPENDIX II: VALUE FUNCTION WHEN S=0
+		\subsection{Boundary conditions: Value function when $S=0$}\label{app_bound_V_S0}
+			\input{appendixes/app_V_S0}
+			\newpage
+		%& APPENDIX III: DERIVATION OF THE COEFFICIENT FUNCTIONS
+		\subsection{Approximation of the coefficients for the Crank-Nicolson method}\label{app_coeff_CrankNic}
+			\input{appendixes/app_coeff_functions}
+			\newpage
+		%& APPENDIX V: CODE
+		\subsection{Code}	\label{app_code}
+			\input{appendixes/app_code}	
+		%	\input{appendixes/app_parameters}
 	
 		
 
