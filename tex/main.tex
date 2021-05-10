@@ -3,7 +3,8 @@
 
 %%% MY PACKAGE
 \usepackage{mysetup}
-
+\usepackage{multirow}
+\usepackage{booktabs}
 \allowdisplaybreaks 
 
 \begin{document}
@@ -18,6 +19,7 @@
 		\input{tasks/intro}
 	
 	%& FIRST TASK: EUROPEAN OPTIONS
+	\newpage
 	\setcounter{secnumdepth}{4}
 	\section{European Options}
 		\subsection{Derivation of boundary condition for large $S$}
@@ -30,21 +32,29 @@
 			\input{tasks/Q1/Q1_fixedS0}
 	\vspace{1cm}
 	%& SECOND TASK: AMERICAN OPTIONS - EMBEDDED OPTIONS
-	\section{American Options - embedded options}
-		\subsection{Value of the contract with an embedded put option when $S_0=17.38$.}
-				\input{tasks/Q2/Q2_fixedS0}
 	\newpage
-	\appendix
-	
+	\section{American Options - embedded put option}
+			\input{tasks/Q2/Q2_intro}
+		\subsection{First analysis of the value of the contract: finding the optimal decision points.}
+			\input{tasks/Q2/Q2_optimal_decision_points}
+		\subsection{Value of the contract with an embedded put option with $r\in\{0.00585, 0.0117, 0.01755\}$ as $S$ increases.}
+			\input{tasks/Q2/Q2_different_r}
+		\subsection{Value of the contract with an embedded put option when $S_0=17.38$.}
+			\input{tasks/Q2/Q2_fixedS0}
+				
 	%& APPENDIXES
 	%%% SETTING EVERYTHING
 	\renewcommand{\thesubsection}{\Alph{subsection}}
 	\titleformat{\subsection}
 	{\normalfont\large\bfseries}{Appendix \thesubsection.}{0.5em}{}
+	\titleformat{\subsubsection}
+	{\normalfont\normalsize}{Appendix \thesubsubsection}{1em}{}
+	\newpage
 	\setcounter{secnumdepth}{0}
 	\section{Appendices}
-	\addcontentsline{toc}{section}{Appendices}
-	\setcounter{secnumdepth}{2}
+	\setcounter{secnumdepth}{4}
+	\setcounter{tocdepth}{6}
+	\setcounter{subsection}{0}
 	%%% THE APPENDIXES
 	%& APPENDIX I: SOLUTION FOR THE ODE FOR C
 	\subsection{Boundary conditions: Solving the ODE to obtain $B(t)$ for large $S$}\label{app_ODE_C}
@@ -62,9 +72,10 @@
 	\subsection{Finding an analytic solution for $\kappa = 0$ and $\beta = 1$}
 		\input{appendixes/app_analytic_sol}	
 		\newpage
-	%& APPENDIX V: INTERPRETATION OF THE PARAMETERS	
+	%& APPENDIX V: CODE
+	\subsection{Code}	\label{app_code}
+		\input{appendixes/app_code}	
 	%	\input{appendixes/app_parameters}
-	
 	
 		
 

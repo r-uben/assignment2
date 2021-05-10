@@ -2,7 +2,7 @@
 //  Q1.cpp
 //  assignment2_codes
 //
-//  Created by Rubén Fernández Fuertes on 6/5/21.
+//  Created on 6/5/21.
 //
 
 #include "Q1.h"
@@ -12,6 +12,10 @@
 
 #include "CrankNicolson.h"
 #include "GeneralFunctions.h"
+
+// To keep results
+#define COMMA << "," <<
+#define END_LINE << endl;
 
 #include <iostream>
 #include <fstream>
@@ -31,21 +35,21 @@ Q1::CQ1(double T, double F, double R, double r, double kappa, double mu, double 
     m_sigma     = sigma;
     m_kappar    = kappa + r;
     m_alphar    = alpha + r;
-    m_Smax  = Smax;
-    m_J     = J;
-    m_I     = I;
-    m_dS    = m_Smax / J;
-    m_dt    = m_T / I;
+    m_Smax      = Smax;
+    m_J         = J;
+    m_I         = I;
+    m_dS        = m_Smax / J;
+    m_dt        = m_T / I;
 }
 
 void
 Q1::variousBetas(vector<double> &betas, int method)
 {
     ofstream output;
-    string strSigma = doubleToString(m_sigma);
+    string strSigma = AUX::doubleToString(m_sigma);
     for (auto beta : betas)
     {
-        string strBeta = doubleToString(beta);
+        string strBeta = AUX::doubleToString(beta);
         output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_beta" + strBeta + "_sigma" + strSigma + ".csv");
         output << "F,I,J,S,V,VtoINF" << endl;
         for (double S = 2; S < m_Smax; S*=1.1)
@@ -60,11 +64,11 @@ void
 Q1::variousKappas(vector<double> &kappas, int method)
 {
     ofstream output;
-    string strBeta  = doubleToString(m_beta);
-    string strSigma = doubleToString(m_sigma);
+    string strBeta  = AUX::doubleToString(m_beta);
+    string strSigma = AUX::doubleToString(m_sigma);
     for (auto kappa : kappas)
     {
-        string strKappa = doubleToString(kappa);
+        string strKappa = AUX::doubleToString(kappa);
         output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_beta" + strBeta + "_kappa" + strKappa + "_sigma" + strSigma + ".csv");
         output << "F,I,J,S,V,VtoINF" << endl;
         for (double S = 2; S < m_Smax; S*=1.1)
@@ -80,10 +84,10 @@ void
 Q1::variousSigmas(vector<double> &sigmas, int method)
 {
     ofstream output;
-    string strBeta = doubleToString(m_beta);
+    string strBeta = AUX::doubleToString(m_beta);
     for (auto sigma : sigmas)
     {
-        string strSigma = doubleToString(sigma);
+        string strSigma = AUX::doubleToString(sigma);
         output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_beta" + strBeta + "_sigma" + strSigma + ".csv");
         output << "F,I,J,S,V,VtoINF" << endl;
         for (double S = 2; S < m_Smax; S*=1.1)
@@ -126,31 +130,41 @@ Q1::increasingS(int I, int J, int iterMax, double gap,  double r)
 }
 
 void
-Q1::fixedS0(double S0, double increment, int nMin, int nMax, int deg, int timesX)
+Q1::variousV_fixedS0(double S0, double incr, int nMin, int nMax, int deg, int timesX)
 {
+    double Smax = timesX * m_X;
     ofstream output;
-    string strDeg = doubleToString(deg, true);
-    string strSmax= doubleToString(timesX, true);
+    string strDeg = to_string(deg);
+    string strSmax= to_string(timesX);
     output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_increasing_iMax_and_jMax_deg" + strDeg + "_Smax" + strSmax + "X.csv");
     output << "F,I,J,S,V,VtoInf" << endl;
-    for (int n=nMin; n<=nMax; n*=increment)
+    for (int n=nMin; n<=nMax; n*=incr)
     {
-        CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, timesX * m_X, n, n);
+        CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, Smax, n*ceil(Smax/S0), n*ceil(Smax/S0));
         crank.eurConvertibleBond(&output, THOMAS, deg);
     }
 }
 
-string
-Q1::doubleToString(double value, bool integer)
+void
+Q1::V_fixedS0(double S0, int deg, int timesX, int I, int J)
 {
-    string str = to_string(value);
-    if (value < 10)
-        str = str.erase(1,1);
-    if (value > 10 && value < 100)
-        str = str.erase(2,2);
-    if (integer == true)
-        str = str.erase(1);
-    else
-        str = str.erase(5);
-    return str;
+    // Convert the integers into strings to name the document
+    ofstream output;
+    // Open the document in order to keep results
+    string strDeg = to_string(deg);
+    string strSmax= to_string(timesX);
+    output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValue_" + strSmax + "X_deg" + strDeg + "_I" + to_string(I) + "_J" + to_string(J) + "_timing.csv");
+    // First Line of the .csv file to further get columns of data
+    output << "I,J,V,time" END_LINE
+    auto start = START_TIME;
+    // Produce results
+    CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, timesX * m_X, I, J);
+    crank.eurConvertibleBond(&output, THOMAS);
+    double optionValue = crank.GetV();
+    // Keep the time of the end of the Crank Nicolson method
+    auto end = END_TIME;
+    // Duration: end - start
+    DURATION<float> duration = (end - start);
+    output << I COMMA J COMMA optionValue COMMA duration.count() END_LINE
+    cout << "Our result has been obtained in " << duration.count() << "s" << endl;
 }

@@ -2,7 +2,7 @@
 //  PayoffFunctions.cpp
 //  ComputationalFinance
 //
-//  Created by Rubén Fernández Fuertes on 14/4/21.
+//  Created on 14/4/21.
 //
 
 #include "PayoffFunctions.h"

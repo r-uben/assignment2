@@ -28,10 +28,10 @@ using namespace std;
 class CCrankNicolson
 {
 public:
-    CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, long I, long J1, long J2);
+    CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, long I, long J);
     // Main functions
     void eurConvertibleBond(ofstream *output, int method = 0, int degree = 2, double tol = 1.e-2, double omega = 1.2);
-    void amConvertibleBond_penalty(ofstream *output, int degree=2, bool saveData = true, double tol = 1.e-6);
+    void amConvertibleBond_penalty(ofstream *output, int degree=2, bool saveData = true, double tol = 1.e-10);
     // Get Option Value
     inline double GetV() {return m_optionValue;};
 private:
@@ -61,13 +61,9 @@ private:
     // Local Variables (dS, dt)
     double m_S0;
     double m_Smax;
-    double m_dS1;
-    double m_dS2;
     double m_dS;
     double m_dt;
     // Grid Parameters
-    long   m_J1;
-    long   m_J2;
     long   m_J;
     long   m_I;
     int    m_jStar;

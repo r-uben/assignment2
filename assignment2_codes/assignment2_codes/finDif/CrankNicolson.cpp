@@ -42,7 +42,7 @@ using namespace std;
 /// In option pricing problems, we must for S over the semi infinite domain, therefore numerically we need to choose an appropiate Smax
 /// The first five parameters are intrinsice option parameters, whilst the last three ones are those appropriate parameters for the method.
 
-CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, long I, long J1, long J2){
+CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, long I, long J){
     m_T         = T;
     m_F         = F;
     m_R         = R;
@@ -58,13 +58,9 @@ CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double 
     m_alphar    = alpha + r;
     m_S0        = S0;
     m_Smax      = Smax;
-    m_J1        = J1 + J2
-    m_J2        = J2;
-    m_J         = J1 + J2;
+    m_J         = J;
     m_I         = I;
-    m_dS1       = m_Smax / J1;
-    m_dS2       = m_Smax / J1;
-    m_dS       = m_Smax / J1;
+    m_dS       = m_Smax / J;
     m_dt        = m_T / I;
     m_jStar     = m_S0/m_dS;
 }
@@ -72,7 +68,7 @@ void
 CN::eurConvertibleBond(ofstream *output, int method, int degree, double tol, double omega)
 {
     // CONVERTIBLE BONDS LIBRARY
-    CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_J, m_I);
+    CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_I, m_J);
     //
     vector <double> vOld(m_J+1), vNew(m_J+1);
     // Setup and initialise the stock price
@@ -104,12 +100,11 @@ CN::eurConvertibleBond(ofstream *output, int method, int degree, double tol, dou
             b.push_back(convBonds.bFunc(i, j));
             c.push_back(convBonds.cFunc(i, j));
             d.push_back(convBonds.dFunc(i, j, vOld));
-            
             // LU method
             if (method == LU)
             {
-                beta.push_back(convBonds.betaFunc(t, j, beta[j-1]));
-                D.push_back(convBonds.DFunc(t, j, beta[j-1], d[j], D[j-1]));
+                beta.push_back(convBonds.betaFunc(approx_t, j, beta[j-1]));
+                D.push_back(convBonds.DFunc(approx_t, j, beta[j-1], d[j], D[j-1]));
             }
         }
         // Boundary conditions at S = Smax
@@ -189,12 +184,11 @@ CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, doubl
 
     m_P = 38.;
     m_t0 = 0.96151;
-    m_iterMax = 1000;
-    m_rho = 1e8;
-
+    m_iterMax = 30000;
+    m_rho = 1e13;
     
     // CONVERTIBLE BONDS LIBRARY
-    CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_J, m_I);
+    CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_I, m_J);
     //
     vector <double> vOld(m_J+1), vNew(m_J+1);
     // Setup and initialise the stock price
@@ -210,11 +204,11 @@ CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, doubl
     for(long i=m_I-1; i>=0; i--)
     {
         double t        = i*m_dt;
-        double approx_t = (i + 0.5251) * m_dt;
+        double approx_t = (i + 0.5) * m_dt;
         /// BOUNDARY CONDITIONS
         // Declare vectors for matrix equations
         vector<double> a = {0.}, b = {1.}, c = {0.}, d;
-        if (approx_t <= m_t0)
+        if (approx_t < m_t0)
             d = {max(m_P,convBonds.V_S0(approx_t))};
         else
             d = {convBonds.V_S0(approx_t)};
@@ -233,8 +227,8 @@ CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, doubl
         // d.push_back(convBonds.V_Smax(m_Smax,approx_t));
         d.push_back(m_R*m_Smax);
         // Temporal restriction
-        int penaltyIt = 0;
-        for (int penaltyIt; penaltyIt < m_iterMax; penaltyIt++)
+        int penaltyIt;
+        for (int penaltyIt=0; penaltyIt < m_iterMax; penaltyIt++)
         {
             // Create new vectors containing a copy of the FD approx
             vector<double> aHat(a), bHat(b), cHat(c), dHat(d);
@@ -242,12 +236,12 @@ CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, doubl
             for (int j=1; j<m_J; j++)
             {
                 // If current value suggesta apply penalty, adjust matrix equations
-                if(vNew[j] < m_R*S[j])
+                if (vNew[j] < m_R*S[j])
                 {
                    bHat[j] = b[j] + m_rho;
                    dHat[j] = d[j] + m_rho*(m_R*S[j]);
                 }
-                if(approx_t < m_t0 && vNew[j] < m_P)
+                if (approx_t < m_t0 && vNew[j] < m_P)
                 {
                    bHat[j] = bHat[j] + m_rho;
                    dHat[j] = dHat[j] + m_rho*m_P;
@@ -260,17 +254,12 @@ CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, doubl
             // Check for differences between vNew and y
             double error = 0.;
             for (int j=0; j<= m_J; j++)
-            {
                 error += (vNew[j] - y[j])*(vNew[j] - y[j]);
-            }
             // Update Value of vNew
             vNew = y;
             // make an exit condition when solution is converged
             if (error < tol * tol)
-            {
-                // START_LINE "Solved after " << penaltyIt << " iterations" END_LINE;
                 break;
-            }
         }
         if(penaltyIt >= m_iterMax)
         {
@@ -320,10 +309,6 @@ CN::thomasSolve(const vector<double> &a,const vector<double> &b_,const vector<do
         temp[j]=(d[j]-c[j]*temp[j+1])/b[j];
     return temp;
 }
-
-
-
-
 
 //if (method == PSOR){
 //    // Solve matrix equations with SOR

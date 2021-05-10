@@ -2,7 +2,7 @@
 //  Q2.hpp
 //  assignment2_codes
 //
-//  Created by Rubén Fernández Fuertes on 7/5/21.
+//  Created on 7/5/21.
 //
 
 #define Q2 CQ2
@@ -47,3 +47,12 @@ private:
     int    m_I;
     int    m_jStar;
 };
+
+// To calculate the time
+#include <chrono>
+#define  CHRONO   std::chrono
+#define  SET_TIME CHRONO::system_clock::now()
+#define  START_TIME CHRONO::system_clock::now()
+#define  END_TIME CHRONO::system_clock::now()
+#define  DURATION CHRONO::duration
+#define  MILLI    std::milli

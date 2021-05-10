@@ -1,94 +1,81 @@
-In this task we have to find the value of the option when $S_0 = 17.38$, and $\beta = 0.808$ and $\sigma  = 0.66$. To do so, we set a squared-grid, i.e., $\texttt{m_J} = \texttt{m_I} = N$ and obtain different values (first column of the next tables). From a first sight, we can roughly see that the value of the option when $S_0 = 17,38$ is around $42.05$. However we would like to see how much we could improve our result to get more digits of precision. This can be done by increasing $S_{max}$. The idea is to have $S_0$ within the points of the grid, although we can make use of Lagrange Interpolation (of different degrees) to make sure we have a correct result.
+In this task we have to find the value of the option when $S_0 = 17.38$, and $\beta = 0.808$ and $\sigma  = 0.66$. To do so, we set a squared-grid, i.e., $\texttt{m_J} = \texttt{m_I} = N$ and obtain different values (first column of the next tables). From a first sight, we can roughly see that the value of the option when $S_0 = 17,38$ is around $42.05\pm10^{-2}$. However we would like to see how much we could improve our result to get more digits of precision. This can be done by increasing $S_{max}$. The idea is to have $S_0$ within the points of the grid, although we can make use of Lagrange Interpolation (of different degrees) to make sure we have a correct result. However, this would add some errors, and it is desiderable to avoid them. The idea is therefore to make sure that there exists a $j^*$ such that $S_0 = j^* \Delta S$, where $\Delta S = S_{max} / J$. Therefore, $j^* = \frac{S_0 J}{S_{max}}$ but, in our case, we have that $X = S_0$, so an easy way to make $J$ an integer is to take $S_{max} = k X$. This would imply that $J =  k j^*$ for some integer $k$. On the other hand, in order to study the convergence, we must iterate the method with different $J$. To do so, we have done a loop ``\texttt{for (int n=nMin; n<=nMax; n*=incr)}'' with $\texttt{nMin=3, nMax=50000, incr=2}$ (they could have been different) and with $\texttt{I=J=n*ceil(Smax/S0)=n*k}$. We can see an example in Table \ref{table1}.
 
 \begin{table}[h!]\scriptsize
-	\setlength{\tabcolsep}{15pt}
-	\renewcommand{\arraystretch}{1.2}
-	\begin{tabular}{cccc}
-		N&  $V(S_0,0)$		& 1st Extrapolation & 2nd Extrapolation\\\hline
-		10 &42.4358063642 &42.39718769513333&  \\
-		20 &41.9861956278 &41.836325382333335& 41.756202194790475\\
-		40 &42.0381025279 &42.05540482793334& 42.08670189159048\\
-		80 &42.048554289 &42.05203820936667& 42.05155726385715 \\
-		160 &42.0499738969& 42.05044709953333& 42.050219798128566\\
-		320 &42.049736206700004& 42.04965697663334& 42.049544101933336\\ 
-		640 &42.0494696149& 42.04938075096666& 42.04934129015714\\
-		1280 &42.0494460974& 42.04943825823334& 42.04944647355715\\
-		2560 &42.049419760999996& 42.049410982199994& 42.049407085623805\\ 
-		5120 &42.0494029471 &42.04939734246667& 42.04939539393334\\
+	\setlength{\tabcolsep}{5pt}
+	\renewcommand{\arraystretch}{1.3}
+	\begin{tabular}{c|ccccccccc}
+		\hline\addlinespace[0.1cm]
+		I=J			& 48	& 96 & 192 & 384 & 768 & 768 & 1546 & 2072 & 6144 \\
+		$V(S_0,0)$ & 41.8408512 & 42.004891854 & 42.04124385 & 42.04867403 & 42.04973806 & 42.049609 & 42.04957 & 42.0495647 & 42.049562 
+       \\\addlinespace[0.1cm]
+		\hline
+	\end{tabular}
+	\vspace{0.3cm}
+	\captionsetup{width=.55\linewidth}
+	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $16$ and $S_{max} = 8X$.}\label{table1}
+\end{table}
+\vspace{-0.6cm}
+In order to improve our results and get more efficiency using a lower $J$, we can study the convergence of our values to further use Richardson Extrapolation (maybe more than one time). The ratios of the difference between results\footnote{Given three values $v_1$, $v_2$, $v_3$, we define the ratio between their differences as $\frac{v_2-v_1}{v_3-v_2}$. Since the convergence of Crank Nicolson method is $\mathcal{O}((\Delta S)^2, (\Delta t)^2)$, then we expect this ratio to be $4$, because the increments are produced by doubling $J$.} can be found in Table \ref{table2}.
+
+\begin{table}[h]\scriptsize
+	\setlength{\tabcolsep}{8pt}
+	\renewcommand{\arraystretch}{1.3}
+	\begin{tabular}{r|rrrrrrrrrr}
+		\hline\addlinespace[0.1cm]
+		$V(S_0,0)$ & 4.51256 & 4.89249 & 6.98301 &  8.26535 & 3.47294 & 4.95559 & 2.69404 & 9.72845 & 0.97506 & \\
+		I Extrap & 2.80979 & 2.08924 & 2.01019 & 80.82043 & 2.73326 & 1.97126 & 2.21787 & 1.84651 & 2.29676 &          \\\addlinespace[0.1cm]
+		\hline
 	\end{tabular}
 	\vspace{0.2cm}
 	\captionsetup{width=.55\linewidth}
-	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $2$ and $Smax = 4X$.}\label{table1}
+	\caption{Ratios from Table \ref{table1} and after doing one extrapolation with $p=2$.}\label{table2}
 \end{table}
-
-To improve our result using less iterations, we may try Richardson extrapolation, which gives, from a method of order $p$, an extrapolated result $w_{new}$ which can be found in the second column of the tables and which is given by
+\vspace{-1cm}
+As we can see, the ratios are not stricly monotonic, but the majority of them are near $4\pm1$, so we can try to do Richardson Extrapolation in order to try to get a more accurate result in less time. Richardson extrapolation provides, from a method of order $p$, an extrapolated result $v_{extrap}$ which can be found in the second row of Table~\ref{table2} and which is given by
 \begin{equation}
-	w_{new} = \frac{2^p v_{new} - v_{old} }{2^p - 1}.
+	v_{extrap} = \frac{2^p v_{new} - v_{old} }{2^p - 1}.
 \end{equation}
 
-This can be repeated a second time in order to get a new extrapolated value. These values can be found in tables \ref{table1}, \ref{table2} and \ref{table3}. As we can see, Table \ref{table1} does not provide more accuracy than 3 digits, $42.049$. It is reasonable because $S_{max}$ is not very large, just $4X$.
+This can be repeated a second time in order to get a new extrapolated value\footnote{We have not obtained a better approximation but the confirmation of at lteast $4$ digits (42.0495) when $I=J=1536$ and of six digits (42.049561) when $I=J=24576$.}, but this time with $p=1$, because the order is $1$ after one extrapolation, as we can see in Table \ref{table2}. Finally, we have kept the values of the contract as $I, J$ increase and after two extrapolations (with $p=1$) in Table \ref{table3}, with $S_{max} = 8X$\footnote{Other values of $S_{max}$, like $4X$, $16X$ and $32X$, have been tried, but none of them has provided a better convergence ratio than $8X$, so we have decided to include only a table for $S_{max}=8X$ in order to not being repetitive.}.
 
 \begin{table}[h!]\scriptsize
 	\setlength{\tabcolsep}{15pt}
 	\renewcommand{\arraystretch}{1.2}
-	\begin{tabular}{cccc}
-		N&  $V(S_0,0)$		& 1st Extrapolation & 2nd Extrapolation\\\hline
-		10 &42.5192165706 &40.78479460266667 & \\
-		20 &42.4250637899 &42.39367952966667 &42.62352023352381\\
-		40 &41.9821376404 &41.83449559056666 &41.75461217069523 \\
-		80 &42.0477544635 &42.051578876066664 &42.05118598870476\\
-		320 &42.049666263 &42.0503035295 &42.050121337133334\\
-		640 &42.0496702995 &42.049671645000004 &42.04958137578572 \\
-		1280 &42.0495235312 &42.049474608433336 &42.049446460352385\\ 
-		2560 &42.0495596724 &42.04957171946667 &42.04958559247143\\
-		5120 &42.0495631021 &42.049564245333336 &42.0495631776
+	\begin{tabular}{rrrrl}
+	I& J&   $V(S_0,0)$		& 1st Extrapolation & 2nd Extrapolation\\\hline
+	   48 &    48 & 42.0048918538 & 42.0595720633 & -                                     \\
+	96 &    96 & 42.0412438594 & 42.0533611946 & 42.047150325933316 \\
+	192 &   192 & 42.0486740302 & 42.0511507538 & 42.048940312999996  \\
+	384 &   384 & 42.0497380652 & 42.0500927435 & 42.04903473326667  \\
+	768 &   768 & 42.0496093308 & 42.0495664193 & 42.04904009513334   \\
+	1536 &  1536 & 42.0495722630 & 42.0495599071 & 42.04955339480001    \\
+	3072 &  3072 & 42.0495647830 & 42.0495622897 & 42.04956467226666   \\
+	6144 &  6144 & 42.0495620065 & 42.0495610810 & 42.04955987233335    \\
+	12288 & 12288 & 42.0495617211 & 42.0495616260 & 42.04956217093333  \\
+	24576 & 24576 & 42.0495614284 & 42.0495613308 & 42.049561035700016   \\
+	49152 & 49152 & 42.0495614516 & 42.0495614593 & 42.04956158783331  \\
 	\end{tabular}
 	\vspace{0.2cm}
 	\captionsetup{width=.55\linewidth}
-	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $2$ and $Smax = 8X$.}\label{table2}
+	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $16$ and $S_{max} = 8X$.}\label{table3}
 \end{table}
-By increasing $S_{max}$ to $8X$, we obtain one more digit of precision, $42.0495$ and a slight intuition about the next digit, $42.04955\pm10^{-5}$. On the other hand, although the first extrapolation does not seem to have a great contribution, the second one helps to get the 4th digit. For example, with $N=640$ and $S_{max} = 8X$, $V_(S_0,0) = 42.04967$, and the value after two extrapolatipon is $42.04958$. The first four decimal digits continue to appear when increasing $N$, even without doing extrapolation.
-\begin{table}[h!]\scriptsize
-	\setlength{\tabcolsep}{15pt}
-	\renewcommand{\arraystretch}{1.2}
-	\begin{tabular}{cccc}
-		N&  $V(S_0,0)$		& 1st Extrapolation & 2nd Extrapolation\\\hline	
-		10 &43.2442621282& 40.307115252766664& \\ 
-		20 &42.8593801387& 42.7310861422& 43.07736769783333\\
-		40 &42.2104002673& 41.9940736435& 41.888786143685714 \\
-		80 &42.0892349162& 42.04884646583333& 42.05667115473809 \\
-		160 &42.061258431300004& 42.05193293633334& 42.05237386069048\\
-		320 &42.0507590518& 42.04725925863333& 42.04659159039048\\
-		640 &42.0501694488& 42.049972914466665& 42.050360579585714\\
-		1280& 42.0497430458& 42.04960091146667& 42.04954776818096\\
-		2560& 42.049586893000004& 42.04953484206667& 42.04952540358096\\
-		5120& 42.049572814099996& 42.049568121133326& 42.049572875285705\\
-	\end{tabular} 
-	\vspace{0.2cm}
-	\captionsetup{width=.55\linewidth}
-	\caption{Values when increasing $\texttt{m_I}$ and $\texttt{m_J}$, Lagrange Interpolation of degree $2$ and $Smax = 12X$.}\label{table3}
-\end{table}
+\vspace{-0.5cm}
+From this table we can conclude that the $V(S_0,0)$ converges to $42.049561$ as $I$ and $J$ increases. However, when $I = J \geq 16384$, the time consumption is too high. To reduce it, we just can get three values using $I= J \in \{3072,6144\}$ and do the extrapolation of order $2$. Since $3072+6144 = 9216 < 12288$, we can obtained six digits of precision with 3072 iterations less and in $8.979847 + 36.19612 = 45.175967$s, $126.9858$s less than when using $I = J = 12288$, whose result is obtained in $172.1617889$s (extrapolation time is near 0).
+
+If we would want to have just five digits of precision, we could either use $I=J= 3072$ with no extrapolation (8.979847s) or $I=J=384$ (0.1666s) and $I=J=568$ (0.6226s), i.e. 952 iterations (2120 less iterations)  and 0.7892s (less than 1s).
+
 To sum up, we can see in Table \ref{table4} the best results we've got when using $S_{max}\in\{8X,12X\}$. We can definitely say that $V(S,t=0) \approx 42.095$, and that $V(S,t=0) \approx 42.0956\pm 10^{-5}$. To obtain this result, the fastest way is to use $N=1280$, $S_{max} = 12X$ and two extrapolations.
 \begin{table}[h!]
-	\begin{tabular}{c|cc}
-		 		&  	8X & 12 X\\\hline
-		640 	& 	42.04958 \text{ \small(II)}	& - \\
-		1280 	&	42.04952 \text{ \small(-)}	& 42.04955 \text{ \small(II)}\\
-		2560 	& 	42.04956 \text{ \small(I)}  & 42.04958 \text{ \small(-)}\\
-		5120 	& 	42.04956 \text{ \small(-)}	& 42.04956 \text{ \small(II)}
+	\setlength{\tabcolsep}{12pt}
+	\renewcommand{\arraystretch}{1.25}
+	\begin{tabular}{c||cc||cc}
+		 I, J		&  	Value & Time (s)& Extrapolated Value& Time (s)\\\hline\addlinespace[0.05cm]
+		952 	& 	42.04953 & 1.3855&42.04956 	& 0.7892 \\
+		9216 	&	42.049560& 106.5886&42.049561 	& 126.9858 \\
 	\end{tabular}
-\vspace{0.2cm}
-	\captionsetup{width=.7\linewidth}
-	\caption{Best approximations from Tables \ref{table2} and Table~\ref{table3}. No extrapolation is labelled with (-); one extrapolation with (I); two with (II).}\label{table4}
+\vspace{0.25cm}
+	\captionsetup{width=.639\linewidth}
+	\caption{Values of the contract when using directly Crank Nicolson and using two different values to obtain the extrapolated value with $p=2$.}\label{table4}
 \end{table}
-
-Finally, just mentioned that ratios of the differences between values may give us the convergence rate, which is theoretically $O((\Delta t)^2, (\Delta S)^2)$. Since they are the same and we have increases of $2n$, we expect to have ratios around $4$. For example, for $S_{max}$, the ratios we've obtained are given in Table \ref{table5}. As we can see, the ratios are almost always at least $4$, which ensures us the second order convergence (and sometimes higher).
-\begin{table}[h!]\small
-	\setlength{\tabcolsep}{7pt}
-	\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{ccccccccc}\hline
-	0.212569 & 8.180584& 4.71912& 6.00127& 473.628019& 0.0275025& 4.060969& 10.537711& 1.7636139
-\end{tabular}
-\vspace{0.2cm}
-	\caption{Ratios of convergence when $S_{max} = 8X$.}\label{table5}
-\end{table}
+\vspace{-0.5cm}
+Finally, just mentioned that ratios of the differences between values may give us the convergence rate, which is theoretically $O((\Delta t)^2, (\Delta S)^2)$. Since they are the same and we have increases of $2n$, we expect to have ratios around $4$. For example, for $S_{max}$, the ratios we've obtained are given in Table \ref{table2}. As we can see, the ratios are not always $4$, so we may not expect the extrapolatino to be perfect. However, as we have mentioned before, many ratios are near to $4$, and indeed the extrapolation has provide us with good result, as we can see in Table \ref{table4}

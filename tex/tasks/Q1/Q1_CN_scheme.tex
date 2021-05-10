@@ -1,6 +1,4 @@
-As we are told to do, we have used the Crank-Nicolson scheme to calculate the value of the option.
-
-To do so, we have calculated an analytic solution for $V$ both when $S=0$ and $S$ becomes large, in order to set the boundary conditions up, i.e., $a[0], b[0], c[0], d[0]$ and $a[\texttt{m\_J}], b[\texttt{m\_J}], c[\texttt{m\_J}], d[\texttt{m\_J}]$, with \texttt{m\_J} being the member variable of the class \texttt{CCrackNicolson} which can be found in the files \texttt{CCrackNicolson.cpp} and \texttt{CCrackNicolson.h}, and which gives us the distance between the stock prices of the grid, i.e.,  $\texttt{m_dS} = \texttt{m_Smax} / \texttt{m_J}$ . The derivation of $V(S=0, t)$ using the method of characteristics for first-order partial differential equations can be found in the Appendix \ref{app_bound_V_S0}:
+We have used the Crank-Nicolson scheme to approximate the value of the option. To do so, we have firstly calculated an analytic solution for $V$, both when $S=0$ and $S$ becomes large, in order to set the boundary conditions up, i.e., $a[0], b[0], c[0], d[0]$ and $a[\texttt{m\_J}], b[\texttt{m\_J}], c[\texttt{m\_J}], d[\texttt{m\_J}]$, with \texttt{m\_J}\footnote{We are going to make use of equispaced typography to denote member variables of C++ code.} being the member variable of the class \texttt{CCrackNicolson} which can be found in the files \texttt{CCrackNicolson.cpp} and \texttt{CCrackNicolson.h}, and which gives us the distance between the stock prices of the grid, i.e.,  $\texttt{m_dS} = \texttt{m_Smax} / \texttt{m_J}$ . The derivation of $V(S=0, t)$ using the method of characteristics for first-order partial differential equations can be found in the Appendix \ref{app_bound_V_S0}, and provides us with the following formula:
 \begin{equation}\label{V_S0}
 	V(S=0,t) =  F \exp{-r(T-t)} + \frac{C}{r+\alpha} \exp{-\alpha T}\left( \exp{\alpha (T-t)} -\exp{-r(T-t)} \right).
 \end{equation}
@@ -8,27 +6,27 @@ To do so, we have calculated an analytic solution for $V$ both when $S=0$ and $S
 On the other hand, the derivation of the coefficients can be found in the Appendix \ref{app_coeff_CrankNic}, and are given by 
 \begin{equation}
 	\begin{aligned}
-		a(j) &= -\frac{1}{4}\sigma^2j^{2\beta}(\Delta S)^{2(\beta -1) }+ \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right] \\
+		a(j) &= -\frac{1}{4}\sigma^2j^{2\beta}(\Delta S)^{2(\beta -1) }+ \frac{\kappa}{4}\left[\frac{\theta(i\Delta t)}{\Delta S} - j\right] \\
 		b(j) &= \frac{1}{\Delta t} + \frac{r}{2} + \frac{1}{2}\sigma^2 j^{2\beta}(\Delta S)^{2(\beta -1) }\\
-		c(j) &=  -\frac{1}{4}\sigma^2j^{2\beta}(\Delta S)^{2(\beta -1) } - \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\\
-		d(i,j)&=\left(\frac{1}{4}\sigma^2 j^{2\beta}(\Delta S)^{2(\beta -1) } - \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j-1}\\
+		c(j) &=  -\frac{1}{4}\sigma^2j^{2\beta}(\Delta S)^{2(\beta -1) } - \frac{\kappa}{4}\left[\frac{\theta(i\Delta t)}{\Delta S} - j\right]\\
+		d(i,j)&=\left(\frac{1}{4}\sigma^2 j^{2\beta}(\Delta S)^{2(\beta -1) } - \frac{\kappa}{4}\left[\frac{\theta(i\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j-1}\\
 		&+ \left(\frac{1}{\Delta t } - \frac{1}{2}\sigma^2 j^{2\beta}(\Delta S)^{2(\beta -1) }  - \frac{r}{2}\right)V_{i+1,j}\\
-		&+ \left(\frac{1}{4}\sigma^2 j^{2\beta}(\Delta S)^{2(\beta -1) }+ \frac{\kappa}{4}\left[\frac{\theta(\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j+1} + C \exp{-\alpha \Delta t}.
+		&+ \left(\frac{1}{4}\sigma^2 j^{2\beta}(\Delta S)^{2(\beta -1) }+ \frac{\kappa}{4}\left[\frac{\theta(i\Delta t)}{\Delta S} - j\right]\right)V_{i+1,j+1} + C \exp{-\alpha \Delta t}.
 	\end{aligned}
 \end{equation}
 for all $0< j < \texttt{m_J}$.
 
-For $j=0$ and $j = \texttt{m_J}$ we set $a[0] = c[0] = a[\texttt{m\_J}] = c[\texttt{m\_J}] =  0$ and $b[0] = b[\texttt{m\_J}] = 1$ because we have an analytic solution for both cases. More precisely, in the $i$th step, $\texttt{d[0]} = \texttt{V_S0}[(i + 0.5) * \texttt{m_dt}]$, where $\texttt{m_dt} = \texttt{m_T} / \texttt{m_I}$, with $m_T$ the time to maturity (in our case is $T=3$) and $\texttt{m_I}$ is the number of time steps we want in our grid. The function $\texttt{V_S0}$ can be found in the class $\texttt{CConvertibleBonds}$ within the files \texttt{Convertiblebonds.cpp} and \texttt{ConvertibleBonds.h}.
+For $j=0$ and $j = \texttt{m_J}$ we set $a[0] = c[0] = a[\texttt{m\_J}] = c[\texttt{m\_J}] =  0$ and $b[0] = b[\texttt{m\_J}] = 1$ because we have an analytic solution for both cases, and therefore we are only interested on the term $V_{i,j}$. More precisely, in the $i$th step, $\texttt{d[0]} = \texttt{V_S0}((i + 0.5) * \texttt{m_dt})$\footnote{Note that, instead of $i\Delta t$, we are going to use $(i+0.5)\Delta t$ in order to get more precision.}, where $\texttt{m_dt} = \texttt{m_T} / \texttt{m_I}$, with $\texttt{m_T}$ the time to maturity (in our case is $T=3$) and $\texttt{m_I}$ is the number of time steps we want in our grid. The function $\texttt{V_S0}$ can be found in the class $\texttt{CConvertibleBonds}$ within the files \texttt{Convertiblebonds.cpp} and \texttt{ConvertibleBonds.h}.
 
 Analogously, in the $i$th step, $d[\texttt{m_J}] = \texttt{V_Smax}(\texttt{m_Smax, (i + 0.5) * \texttt{m_dt}})$, where he function $\texttt{V_Smax}$ can be found in the class $\texttt{CConvertibleBonds}$ within the same two files.
 
 In other words, for all $i$,
 \begin{equation}
 	\begin{aligned}
-		d(i,0) &= F \exp{-r(T-(i + 0.5) \Delta t)} + \frac{C}{r+\alpha} \exp{-\alpha T}\left( \exp{\alpha (T-(i + 0.5) \Delta t)} -\exp{-r(T-(i + 0.5) \Delta t)} \right),\\
-		d(i,J) &= Smax \ A((i + 0.5) \Delta t) + B((i + 0.5) \Delta t),
+		d(i,0) &= F \exp{-r(T-i \Delta t)} + \frac{C}{r+\alpha} \exp{-\alpha T}\left( \exp{\alpha (T-i \Delta t)} -\exp{-r(T-i \Delta t)} \right),\\
+		d(i,J) &= S_{max} \ A(i \Delta t) + B(i\Delta t),
 	\end{aligned}
 \end{equation}
-where $A$ and $B$ are the functions given in (\ref{A}) and (\ref{B}).
+where $A$ and $B$ are the functions given in (\ref{A}) and (\ref{B}). Recall one more time that in we are going to use $(i+0.5)\Delta t$ instead of $i\Delta t$ in our code.
 
 

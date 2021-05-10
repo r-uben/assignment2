@@ -44,7 +44,7 @@ as $S\to\infty$. Hence,
 	A(t) = R\exp{-(\kappa + r)(T-t)}
 \end{equation} 
 
-On the other hand, second equation gives us that $B$ is of the form $B(t) = C(t) \exp{-r (T-t)}$, $C(T) = B(T)$, where $C(t)$ is to be derived. Differentiating $B(t)$ and rearranging terms we get
+On the other hand, the second equation gives us that $B$ is of the form $B(t) = C(t) \exp{-r (T-t)}$, $C(T) = B(T)$, where $C(t)$ is to be derived. Differentiating $B(t)$ and rearranging terms we get
 %%% ODE FOR THE "CONSTANT" MULTIPLYING B
 	\begin{equation}\label{C_ode}
 		C'(t) = - \exp{r(T-t)}f(t), 
@@ -61,10 +61,9 @@ which implies that (see Appendix \ref{app_ODE_C})
 Therefore, for $S$ sufficiently large we obtain (see Appendix \ref{app_ODE_C}),
 	%%% B(t) 
 	\begin{equation}\label{B}
-			B(t)  = {2X R}\exp{-\left(r+\frac{\kappa}{2}\right)(T-t)}\sinh\left(\frac{\kappa}{2}[T-t]\right)- \frac{C}{r+\alpha}\exp{rt}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right]
+			B(t)  = {2X R}\exp{-\left(r+\frac{\kappa}{2}\right)(T-t)}\sinh\left(\frac{\kappa}{2}[T-t]\right)- \frac{C}{r+\alpha}\exp{rt}\left[\exp{-(r+\alpha)T}-\exp{-(r+\alpha)t}\right],
 	\end{equation}
-
-Finally,
+which finally gives us the value function when $S$ becomes large:
 	%%% VALUE FUNCTION WHEN S TENDS TO INFINITY
 	\begin{equation}\label{boundary_formula}
 		V(S,t) = SR  \ \exp{-\kappa_r(T-t)} +  {2X R}\exp{-\frac{1}{2}\left(r-\kappa_r\right)(T-t)}\sinh \frac{\kappa}{2}(T-t)- \frac{C}{\alpha_r}\exp{rt}\left[\exp{-\alpha_r T}-\exp{-\alpha_r t}\right],

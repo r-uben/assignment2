@@ -2,7 +2,7 @@
 //  Q1.hpp
 //  assignment2_codes
 //
-//  Created by Rubén Fernández Fuertes on 6/5/21.
+//  Created on 6/5/21.
 //
 
 #define Q1 CQ1
@@ -18,10 +18,9 @@ public:
     void variousKappas(vector<double> &kappas, int method);
     void variousSigmas(vector<double> &sigmas, int method);
     void increasingS(int I, int J, int iterMax, double gap = 1.1,  double r = 0);
-    void fixedS0(double S0, double increment, int nMin, int nMax, int deg, int timesX);
+    void V_fixedS0(double S0, int deg, int timesX, int I, int J);
+    void variousV_fixedS0(double S0, double increment, int nMin, int nMax, int deg, int timesX);
 private:
-    //
-    string doubleToString(double value, bool integer = false);
     // Useful Functions
     // PARAMETERS
     double m_T;
@@ -35,7 +34,6 @@ private:
     double m_alpha;
     double m_beta;
     double m_sigma;
-
     // AUXILIAR PARAMETERS
     double m_kappar;
     double m_alphar;
@@ -49,3 +47,11 @@ private:
     int    m_jStar;
 };
 
+// To calculate the time
+#include <chrono>
+#define  CHRONO   std::chrono
+#define  SET_TIME CHRONO::system_clock::now()
+#define  START_TIME CHRONO::system_clock::now()
+#define  END_TIME CHRONO::system_clock::now()
+#define  DURATION CHRONO::duration
+#define  MILLI    std::milli

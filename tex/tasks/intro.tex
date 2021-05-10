@@ -16,9 +16,7 @@ with $\kappa$ being the mean reversion rate, $\beta$ the elasticity of variance 
 \begin{equation}
 	\theta(t) = (1+\mu)X\exp{\mu t},
 \end{equation}
-where $X$ and $\mu$ are constant model parameters that can be determined from the market, reflecting the dividend payout of the firm.
-
-The market value $V(S,t)$ of this contract satisfies the following PDE
+where $X$ and $\mu$ are constant model parameters that can be determined from the market, reflecting the dividend payout of the firm. Further, the market value $V(S,t)$ of this contract satisfies the following PDE
 \begin{equation}\label{general_pde}
 	\partial_t V + \frac{1}{2}\sigma^2 S^{2\beta}\partial_{SS}V + \kappa (\theta(t) - S)\partial_SV - rV + C\exp{-\alpha t} = 0,
 \end{equation}
@@ -31,3 +29,16 @@ and
 	V(S,t) = S A(t) + B(t), \doublequad \text{ as } S\to\infty,
 \end{equation}
 for $A$ and $B$ some functions to be derived.
+
+In the next sections, the standard values for the parameters are given in Table \ref{parameters}, although other ones could be further stated to explore some properties of this kind of contract.
+
+\begin{table}[h!]
+	\setlength{\tabcolsep}{8pt}
+	\renewcommand{\arraystretch}{1.2}
+	\begin{tabular}{ccccccccccc}
+		T & F & R & r & $\kappa$ & $\mu$ & $X$ & $C$ & $\alpha$ & $\beta$ & $\sigma$\\\addlinespace[0.02cm]\hline\hline\addlinespace[0.12cm]
+		3 & 35 & 2 & 0.0117 & 0.0833333333333 & 0.0053 & 17.38 & 0.205 & 0.02 & 0.808 & 0.66\\\addlinespace[0.05cm]\hline
+	\end{tabular}
+	\vspace{0.3cm}
+	\caption{Standard values for the parameters of the contract.}\label{parameters}
+\end{table}

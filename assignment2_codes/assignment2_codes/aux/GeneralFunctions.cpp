@@ -7,6 +7,9 @@
 
 #include "GeneralFunctions.h"
 #define  AUX CGeneralFunctions
+#define COMMA << "," <<
+#define END_LINE << endl;
+
 
 #include <cmath>
 #include <vector>
@@ -17,7 +20,7 @@ using namespace std;
 double
 AUX::discountFactor(double interest_rate, double time)
 {
-    return exp(- interest_rate * time);
+    return exp(-interest_rate * time);
 }
 double
 AUX::maxFunc(double x, double y)
@@ -43,17 +46,27 @@ AUX::lagInterp(double S, vector<double> p1, vector<double> p2)
     return approxJ + approxJplus1;
 }
 string
-AUX::doubleToString(double value, bool integer)
+AUX::doubleToString(double value)
 {
     string str = to_string(value);
     if (value < 10)
+        // erase the comma of a number lower than 10
         str = str.erase(1,1);
     if (value > 10 && value < 100)
+        // erase the comma of a number greater than 10
         str = str.erase(2,2);
-    if (integer == true)
-        str = str.erase(1);
-    else
-        str = str.erase(5);
+    // 4-5 decimals
+    str = str.erase(5);
     return str;
+}
+
+void
+AUX::extrap(double S1, double S2, double p)
+{
+    auto start = START_TIME;
+    double extrapValue = (pow(2,p)*S2 - S1) / (pow(2,p) - 1);
+    auto end   = END_TIME;
+    DURATION<float> duration = (end - start);
+    cout << extrapValue COMMA duration.count() END_LINE;
 }
 

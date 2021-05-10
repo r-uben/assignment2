@@ -10,7 +10,7 @@
 using namespace std;
 
 vector<double>
-GRID::setupStockPrices(double dS, int J){
+GRID::setupStockPrices(double dS, long J){
     vector<double> S(J+1);
     for (int j=0; j<=J; j++){
         S[j]  = j * dS;

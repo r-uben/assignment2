@@ -1,0 +1,1431 @@
+We have organised our code in two main folders called \texttt{finDif} and \texttt{aux}. The first folder contains the main files of the Crank Nicolson method, \texttt{CrankNicolson.cpp} and \texttt{CrankNicolson.h} and two more files, \texttt{taks} and \texttt{aux}. The former contains the especific classes for solving both tasks, whist the latter contains auxiliar functions for the Crank Nicolson Method such that the set up of the Convertible Bond, \texttt{ConvertibleBonds.cpp} and\texttt{ConvertibleBonds.h} or functions for constructing the grid, \texttt{GridConstructos.cpp} and \texttt{GridConstructor.h}.
+
+Within the \texttt{aux} function we can find files for printing macros and other general functions.
+
+\subsubsection{\texttt{main.cpp}}
+Here we provide the \texttt{main.cpp}. Most of functions are commented. To print something one just has to remove the \texttt{//}. 
+\begin{lstlisting}
+	#include <cmath>
+	#include <vector>
+	#include <algorithm>
+	
+	#include <iostream>
+	#include <fstream>
+	// For this task
+	#include "CrankNicolson.h"
+	#include "ConvertibleBonds.h"
+	#include "Q1.h"
+	#include "Q2.h"
+	// General
+	#include "GeneralFunctions.h"
+	// To calculate the time
+	#include <chrono>
+	#define  CHRONO   std::chrono
+	#define  SET_TIME CHRONO::system_clock::now()
+	#define  DURATION CHRONO::duration
+	#define  MILLI    std::milli
+	
+	#define NEXT_CASE cout << "#######" << endl;
+	
+	using namespace std;
+	/* Template code for the Crank Nicolson Finite Difference
+	*/
+	int main(){
+		cout.precision(15);
+		// PARAMETERS
+		double T = 3., F = 35., R = 2, r = 0.0117, kappa = 0.0833333333333, mu = 0.0053, X = 17.38, C = 0.205, alpha = 0.02, beta = 0.808, sigma = 0.66;
+		double Smax = 250;
+		double I = 500;
+		double J = 500;
+		ofstream output;
+		Q1 q1(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 1000, I, J);
+		Q2 q2(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, 1000, I, J);
+		/*
+		TASK 1
+		*/
+		//    CONV_BONDS convBond(T, F, R, r, kappa, mu, X, C, alpha, beta, sigma, Smax, J, I);
+		//    cout << (F - convBond.B(0)) / convBond.A(0) << endl;
+		
+		///
+		/// FIXING BETA AND MOVING SIGMA
+		///
+		// vector <double> sigmas = {0, 0.381, 0.66, 0.802, 0.962, 1};
+		// q1.variousSigmas(sigmas, THOMAS);
+		
+		///
+		/// FIXING SIGMA AND MOVING BETA
+		///
+		// vector <double> betas = {0.892};
+		// q1.variousBetas(betas, THOMAS);
+		
+		///
+		/// FIXING SIGMA AND AND BETA AND MOVING KAPPA
+		///
+		// vector <double> kappas = {0, 0.02, 0.0833, 0.2, 0.5, 1};
+		// q1.variousKappas(kappas, THOMAS);
+		
+		///
+		/// INCREASING IMAX AND JMAX (SQUARE) AND FIXING SMAX
+		///
+		//  q1.variousV_fixedS0(17.38, 2, 2, 20000, 16, 8.);
+		//  vector<double> v = {42.0495722630, 42.0495647830, 42.0495620065};
+		//  q1.V_fixedS0(17.38, 16, 8., 952, 952);
+		//  q1.V_fixedS0(17.38, 16, 8., 9216, 9216);
+		//  AUX::extrap(v[1], v[2], 2);
+		
+		/*
+		TASK 2
+		*/
+		//    q1.increasingS(500, 500, 300, 1.05);
+		//    q2.increasingS(100, 100, 200, 1.05);
+		//    q2.increasingS(200, 200, 200, 1.05);
+		//    vector<double> rs = {0.00585, 0.0117, 0.01755};
+		//    q2.variousInterestRates(rs, 300, 300, 200);
+		//    q2.variousV_fixedS0(17.38, 0.96151, 2, 2, 80000, 16, 8.);
+		//    q2.V_fixedS0(17.38, 0.96151, 16, 8., 128, 64);
+		//    q2.V_fixedS0(17.38, 0.96151, 16, 8., 256, 128);
+		//    AUX::extrap(43.18821969729999, 43.2219325264, 2);
+		return 0;
+	}
+\end{lstlisting}
+
+\subsubsection{\texttt{finDif} folder}
+
+\begin{lstlisting}
+	//
+	//  CrankNicolson.h
+	//  assignment2_codes
+	//
+	//  Created on 28/4/21.
+	//
+	
+	#include <vector>
+	#include <iostream>
+	#include <fstream>
+	using namespace std;
+	
+	#define CN  CCrankNicolson
+	#define LU      1
+	#define SOR     2
+	#define THOMAS  3
+	
+	#define PSOR                1
+	#define POLICY_ITERATION    2
+	#define PENALTY             3
+	
+	#define EUROPEAN false
+	#define AMERICAN true
+	
+	#define SAVE        true
+	#define DONT_SAVE   false
+	
+	class CCrankNicolson
+	{
+		public:
+		CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, long I, long J);
+		// Main functions
+		void eurConvertibleBond(ofstream *output, int method = 0, int degree = 2, double tol = 1.e-2, double omega = 1.2);
+		void amConvertibleBond_penalty(ofstream *output, int degree=2, bool saveData = true, double tol = 1.e-6);
+		// Get Option Value
+		inline double GetV() {return m_optionValue;};
+		private:
+		// Useful Functions
+		double approxPrice(vector<double> &v, vector<double> &s);
+		vector<double> thomasSolve(const vector<double> &a,const vector<double> &b_,const vector<double> &c, vector<double> &d);
+		// PARAMETERS
+		double m_T;
+		double m_F;
+		double m_R;
+		double m_r;
+		double m_kappa;
+		double m_mu;
+		double m_X;
+		double m_C;
+		double m_alpha;
+		double m_beta;
+		double m_sigma;
+		// AMERICAN PARAMETERS
+		double m_P;
+		double m_rho;
+		double m_iterMax;
+		double m_t0;
+		// AUXILIAR PARAMETERS
+		double m_kappar;
+		double m_alphar;
+		// Local Variables (dS, dt)
+		double m_S0;
+		double m_Smax;
+		double m_dS;
+		double m_dt;
+		// Grid Parameters
+		long   m_J;
+		long   m_I;
+		int    m_jStar;
+		// Option Value
+		double m_optionValue;
+	};
+\end{lstlistings}
+
+\begin{lstlisting}
+	//
+	//  CrankNicolson.cpp
+	//  assignment2_codes
+	//
+	//  Created  on 28/4/21.
+	//
+	
+	/// Header of the explicit difference method
+	#include "CrankNicolson.h"
+	
+	/// Header with convertible bonds functions
+	#include "ConvertibleBonds.h"
+	
+	/// Header with some important and useful functions
+	#include "GeneralFunctions.h"
+	
+	/// Header with payoff functions of several options
+	#include "PayoffFunctions.h"
+	
+	/// Header for constructing the grid of the explicit difference method
+	#include "GridConstructor.h"
+	
+	/// Header for printing data
+	#include "PrintMacros.h"
+	
+	// To calculate the time
+	#include <chrono>
+	#define  CHRONO   std::chrono
+	#define  SET_TIME CHRONO::system_clock::now()
+	#define  DURATION CHRONO::duration
+	#define  MILLI    std::milli
+	
+	/// Important libraries
+	#include <cmath>
+	#include <algorithm>
+	#include <vector>
+	#include <iostream>
+	#include <fstream>
+	using namespace std;
+	
+	/// First declare the parameters for the problem, local grid and variables and the vectors required
+	/// In option pricing problems, we must for S over the semi infinite domain, therefore numerically we need to choose an appropiate Smax
+	/// The first five parameters are intrinsice option parameters, whilst the last three ones are those appropriate parameters for the method.
+	
+	CN::CCrankNicolson(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double S0, double Smax, long I, long J){
+		m_T         = T;
+		m_F         = F;
+		m_R         = R;
+		m_r         = r;
+		m_kappa     = kappa;
+		m_mu        = mu;
+		m_X         = X;
+		m_C         = C;
+		m_alpha     = alpha;
+		m_beta      = beta;
+		m_sigma     = sigma;
+		m_kappar    = kappa + r;
+		m_alphar    = alpha + r;
+		m_S0        = S0;
+		m_Smax      = Smax;
+		m_J         = J;
+		m_I         = I;
+		m_dS       = m_Smax / J;
+		m_dt        = m_T / I;
+		m_jStar     = m_S0/m_dS;
+	}
+	void
+	CN::eurConvertibleBond(ofstream *output, int method, int degree, double tol, double omega)
+	{
+		// CONVERTIBLE BONDS LIBRARY
+		CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_I, m_J);
+		//
+		vector <double> vOld(m_J+1), vNew(m_J+1);
+		// Setup and initialise the stock price
+		vector <double> S = GRID::setupStockPrices(m_dS, m_J);
+		// Setup and initialise the final conditions on the option price
+		for (int j=0; j<=m_J; j++)
+		{
+			vOld[j] = PAYOFF::convBond(S[j], m_R, m_F);
+			vNew[j] = PAYOFF::convBond(S[j], m_R, m_F);
+			// PRINT_5DATA_LINE(m_I, j, S[j], vNew[j], vOld[j])
+		}
+		// start looping through time levels
+		for(long i=m_I-1; i>=0; i--)
+		{
+			double t        = i * m_dt;
+			double approx_t = (i + 0.5) * m_dt;
+			/// BOUNDARY CONDITIONS
+			// Declare vectors for matrix equations
+			vector<double> a = {0.}, b = {1.}, c = {0.}, d = {convBonds.V_S0(approx_t)};
+			// LU method
+			vector<double> beta = {b[0]}, D = {d[0]};
+			
+			/// SET UP MATRIX EQUATIONS
+			// PRINT_4DATA_LINE("a", "b", "c", "d")
+			// PRINT_4DATA_LINE(a[0], b[0],c[0], d[0])
+			for(int j=1;j< m_J;j++)
+			{
+				a.push_back(convBonds.aFunc(i, j));
+				b.push_back(convBonds.bFunc(i, j));
+				c.push_back(convBonds.cFunc(i, j));
+				d.push_back(convBonds.dFunc(i, j, vOld));
+				// LU method
+				if (method == LU)
+				{
+					beta.push_back(convBonds.betaFunc(approx_t, j, beta[j-1]));
+					D.push_back(convBonds.DFunc(approx_t, j, beta[j-1], d[j], D[j-1]));
+				}
+			}
+			// Boundary conditions at S = Smax
+			a.push_back(0.);
+			b.push_back(1.);
+			c.push_back(0.);
+			d.push_back(convBonds.V_Smax(m_Smax,approx_t));
+			
+			// EUROPEAN OPTIONS
+			// SOLVE WITH LU METHOD
+			if (method == LU)
+			{
+				beta.push_back(convBonds.betaFunc(i, m_J, beta[m_J-1]));
+				D.push_back(convBonds.DFunc(i, m_J, beta[m_J-1], d[m_J], D[m_J-1]));
+				// Solve matrix equations with LU method
+				vNew[0] = m_X;
+				vNew[m_J] = D[m_J] / beta[m_J];
+				for (long j=m_J-1; j >=0; j--)
+				vNew[j] = convBonds.prevV(t, j, beta, D, vNew);
+			}
+			// SOLVE WITH SOR METHOD
+			if (method == SOR)
+			{
+				// Solve matrix equations with SOR
+				long y, sor, iterMax = 10000;
+				for (sor = 0; sor < iterMax; sor++)
+				{
+					// SOR equations in here
+					// j = 0
+					{
+						y = (d[0] - c[0] * vNew[1]) / b[0];
+						vNew[0] = vNew[0] + omega * (y-vNew[0]);
+					}
+					// 0 < j < jMax
+					for(long j=1; j<m_J; j++)
+					{
+						y = (d[j] - a[j] * vNew[j-1] - c[j]*vNew[j+1]) / b[j];
+						vNew[j] = vNew[j] + omega * (y-vNew[j]);
+					}
+					// j = jMax
+					{
+						y = (d[m_J] - a[m_J] * vNew[m_J-1]) / b[m_J];
+						vNew[m_J] = vNew[m_J] + omega * (y-vNew[m_J]);
+					}
+					// Calculate residual
+					double error=0.;
+					error += fabs(d[0] - b[0] * vNew[0] - c[0] * vNew[1]);
+					for(long j=1; j<m_J;j++)
+					error += fabs(d[j] - a[j]*vNew[j-1] - b[j]*vNew[j] - c[j]*vNew[j+1]);
+					error += fabs(d[m_J] - a[m_J]*vNew[m_J-1] - b[m_J]*vNew[m_J]);
+					// Check for convergence and exit loop if converged
+					if(error < tol)
+					break;
+				}
+				if(sor==iterMax)
+				PRINT_DATA_LINE("NOT CONVERGED");
+			}
+			// SOLVE WITH THOMAS SOLVER ALGORITHM
+			if (method == THOMAS)
+			vNew = thomasSolve(a, b, c, d);
+			// Set old=new
+			vOld = vNew;
+		}
+		// Finish looping through time levels
+		// output the estimated option price
+		double optionValue = GRID::lagrangeInterpolation(vNew, S, m_S0, degree);//approxPrice(vNew, S);
+		// output the estimated option price
+		double asympV = m_S0*convBonds.A(0) + convBonds.B(0);
+		DATA_LINE(output, m_F, m_I, m_J, m_S0, optionValue, asympV);
+		PRINT_DATA_LINE(m_F, m_I, m_J, m_S0, optionValue, asympV);
+		
+	}
+	
+	void
+	CN::amConvertibleBond_penalty(ofstream *output, int degree, bool saveData, double tol)
+	{
+		
+		m_P = 38.;
+		m_t0 = 0.96151;
+		m_iterMax = 10000;
+		m_rho = 1e8;
+		
+		// CONVERTIBLE BONDS LIBRARY
+		CONV_BONDS convBonds(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, m_Smax, m_I, m_J);
+		//
+		vector <double> vOld(m_J+1), vNew(m_J+1);
+		// Setup and initialise the stock price
+		vector <double> S = GRID::setupStockPrices(m_dS, m_J);
+		// Setup and initialise the final conditions on the option price
+		for (long j=0; j<=m_J; j++)
+		{
+			vOld[j] = PAYOFF::convBond(S[j], m_R, m_F);
+			vNew[j] = PAYOFF::convBond(S[j], m_R, m_F);
+			// PRINT_5DATA_LINE(m_I, j, S[j], vNew[j], vOld[j])
+		}
+		// start looping through time levels
+		for(long i=m_I-1; i>=0; i--)
+		{
+			double t        = i*m_dt;
+			double approx_t = (i + 0.5) * m_dt;
+			/// BOUNDARY CONDITIONS
+			// Declare vectors for matrix equations
+			vector<double> a = {0.}, b = {1.}, c = {0.}, d;
+			if (approx_t <= m_t0)
+			d = {max(m_P,convBonds.V_S0(approx_t))};
+			else
+			d = {convBonds.V_S0(approx_t)};
+			/// SET UP MATRIX EQUATIONS
+			for(int j=1;j< m_J;j++)
+			{
+				a.push_back(convBonds.aFunc(i, j));
+				b.push_back(convBonds.bFunc(i, j));
+				c.push_back(convBonds.cFunc(i, j));
+				d.push_back(convBonds.dFunc(i, j, vOld));
+			}
+			// Boundary conditions at S = Smax
+			a.push_back(0.);
+			b.push_back(1.);
+			c.push_back(0.);
+			// d.push_back(convBonds.V_Smax(m_Smax,approx_t));
+			d.push_back(m_R*m_Smax);
+			// Temporal restriction
+			int penaltyIt;
+			for (int penaltyIt=0; penaltyIt < m_iterMax; penaltyIt++)
+			{
+				// Create new vectors containing a copy of the FD approx
+				vector<double> aHat(a), bHat(b), cHat(c), dHat(d);
+				// Apply penalty here to finite difference scheme
+				for (int j=1; j<m_J; j++)
+				{
+					// If current value suggesta apply penalty, adjust matrix equations
+					if(vNew[j] < m_R*S[j])
+					{
+						bHat[j] = b[j] + m_rho;
+						dHat[j] = d[j] + m_rho*(m_R*S[j]);
+					}
+					if( approx_t < m_t0 && vNew[j] < m_P)
+					{
+						bHat[j] = bHat[j] + m_rho;
+						dHat[j] = dHat[j] + m_rho*m_P;
+					}
+					
+				}
+				// Solve with thomas Method
+				vector <double> y = thomasSolve(aHat, bHat, cHat, dHat);
+				// y now contains next guess at solution
+				// Check for differences between vNew and y
+				double error = 0.;
+				for (int j=0; j<= m_J; j++)
+				error += (vNew[j] - y[j])*(vNew[j] - y[j]);
+				// Update Value of vNew
+				vNew = y;
+				// make an exit condition when solution is converged
+				if (error < tol * tol)
+				break;
+			}
+			if(penaltyIt >= m_iterMax)
+			{
+				PRINT_DATA_LINE("Error NOT converging within required iterations");
+				throw;
+			}
+			vOld=vNew;
+		} // Ending temporal loop
+		
+		// Finish looping through time levels
+		// output the estimated option price
+		m_optionValue = GRID::lagrangeInterpolation(vNew, S, m_S0, degree);//approxPrice(vNew, S);
+		// output the estimated option price
+		double asympV = m_S0*convBonds.A(0) + convBonds.B(0);
+		if (saveData == SAVE)
+		{
+			DATA_LINE(output, m_F, m_I, m_J, m_S0, m_optionValue, asympV);
+		}
+		PRINT_DATA_LINE(m_F, m_I, m_J, m_S0, m_optionValue, asympV);
+	}
+	
+	
+	// USEFUL FUNCTIONS
+	double
+	CN::approxPrice(vector<double> &v, vector<double> &s)
+	{
+		vector<double> p1 = {s[m_jStar], v[m_jStar]};
+		vector<double> p2 = {s[m_jStar+1], v[m_jStar+1]};
+		return AUX::lagInterp(m_S0, p1, p2);
+	}
+	
+	vector<double>
+	CN::thomasSolve(const vector<double> &a,const vector<double> &b_,const vector<double> &c, vector<double> &d)
+	{
+		auto n=a.size();
+		std::vector<double> b(n),temp(n);
+		// initial first value of b
+		b[0]=b_[0];
+		for(auto j=1;j<n;j++)
+		{
+			b[j]=b_[j]-c[j-1]*a[j]/b[j-1];
+			d[j]=d[j]-d[j-1]*a[j]/b[j-1];
+		}
+		// calculate solution
+		temp[n-1]=d[n-1]/b[n-1];
+		for(int j=n-2; j>=0; j--)
+		temp[j]=(d[j]-c[j]*temp[j+1])/b[j];
+		return temp;
+	}
+	
+	//if (method == PSOR){
+		//    // Solve matrix equations with SOR
+		//    int y, sor, iterMax = 10000;
+		//    for (sor = 0; sor < iterMax; sor++)
+		//    {
+			//        // SOR equations in here
+			//        // j = 0
+			//        {
+				//          y = (d[0] - c[0] * vNew[1]) / b[0];
+				//          vNew[0] = max(vNew[0] + omega * (y-vNew[0]), m_P);
+				//        }
+			//        // 0 < j < jMax
+			//        for(int j=1; j<m_J; j++)
+			//        {
+				//          y = (d[j] - a[j] * vNew[j-1] - c[j]*vNew[j+1]) / b[j];
+				//          vNew[j] = max(vNew[j] + omega * (y-vNew[j]), m_P);
+				//        }
+			//        // j = jMax
+			//        {
+				//          y = (d[m_J] - a[m_J] * vNew[m_J-1]) / b[m_J];
+				//          vNew[m_J] = max(vNew[m_J] + omega * (y-vNew[m_J]), m_P);
+				//        }
+			//        // Calculate residual
+			//        double error=0.;
+			//        error += fabs(d[0] - b[0] * vNew[0] - c[0] * vNew[1]);
+			//        for(int j=1; j<m_J;j++)
+			//          error += fabs(d[j] - a[j]*vNew[j-1] - b[j]*vNew[j] - c[j]*vNew[j+1]);
+			//        error += fabs(d[m_J] - a[m_J]*vNew[m_J-1] - b[m_J]*vNew[m_J]);
+			//        // Check for convergence and exit loop if converged
+			//        if(error < tol)
+			//          break;
+			//    }
+		//}
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  PayoffFunctions.hpp
+	//  ComputationalFinance
+	//
+	//  Created on 14/4/21.
+	//
+	
+	#define  PAYOFF CPayoffFunctions
+	
+	class CPayoffFunctions{
+		public:
+		static double callOption(double stock_price, double strike_price);
+		static double putOption(double stock_price, double strike_price);
+		static double convBond(double stock_price, double R, double F);
+	};
+\end{lstlisting}
+\begin{lstlisting}
+	//
+	//  PayoffFunctions.cpp
+	//  ComputationalFinance
+	//
+	//  Created on 14/4/21.
+	//
+	
+	#include "PayoffFunctions.h"
+	#include "GeneralFunctions.h"
+	
+	// CALL OPTION PAYOFF
+	double
+	PAYOFF::callOption(double stock_price, double strike_price){
+		return AUX::maxFunc(stock_price - strike_price, 0.);
+	}
+	
+	// PUT OPTION PAYOFF
+	double
+	PAYOFF::putOption(double stock_price, double strike_price){
+		return AUX::maxFunc(strike_price - stock_price, 0.);
+	}
+	
+	// CONVERTIBLE BOND
+	double
+	PAYOFF::convBond(double stock_price, double R, double F)
+	{
+		return AUX::maxFunc(F, R * stock_price);
+	}	
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  ConvertibleBonds.hpp
+	//  assignment2_codes
+	//
+	//  Created on 28/4/21.
+	//
+	
+	#define CONV_BONDS CConvertibleBonds
+	
+	#include <vector>
+	#include <iostream>
+	#include <fstream>
+	using namespace std;
+	
+	class CConvertibleBonds
+	{
+		public:
+		CConvertibleBonds(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double Smax, long I, long J);
+		
+		double V_Smax(double S, double t);
+		double V_S0(double t);
+		// AUXILIAR FUNCTIONS
+		double A(double t);
+		double B(double t);
+		// COEFFICIENTS FOR THE PDE
+		double aFunc(long i, long j);
+		double bFunc(long i, long j);
+		double cFunc(long i, long j);
+		double dFunc(long i, long j, vector<double> &v);
+		double theta(double t);
+		// LU coefficients
+		double betaFunc(long i, long j, double prevBeta);
+		double DFunc(long i, long j, double prevBeta, double d, double prevD);
+		double prevV(long i, long j, vector<double>& beta, vector<double>& D, vector<double>& V);
+		private:
+		// PARAMETERS
+		double m_T;
+		double m_F;
+		double m_R;
+		double m_r;
+		double m_kappa;
+		double m_mu;
+		double m_X;
+		double m_C;
+		double m_alpha;
+		double m_beta;
+		double m_sigma;
+		// PDE PARAMETERS
+		double m_Smax;
+		double m_J;
+		double m_I;
+		double m_dS;
+		double m_dt;
+		// AUXILIAR PARAMETERS
+		double m_kappar;
+		double m_alphar;
+		
+	};
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  ConvertibleBonds.cpp
+	//  assignment2_codes
+	//
+	//  Created on 28/4/21.
+	//
+	
+	#include "ConvertibleBonds.h"
+	#include <cmath>
+	#include <algorithm>
+	#include <vector>
+	#include <iostream>
+	#include <fstream>
+	using namespace std;
+	
+	CONV_BONDS::CConvertibleBonds(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double Smax, long I, long J)
+	{
+		m_T         = T;
+		m_F         = F;
+		m_R         = R;
+		m_r         = r;
+		m_kappa     = kappa;
+		m_mu        = mu;
+		m_X         = X;
+		m_C         = C;
+		m_alpha     = alpha;
+		m_beta      = beta;
+		m_sigma     = sigma;
+		m_kappar    = kappa + r;
+		m_alphar    = alpha + r;
+		m_Smax      = Smax;
+		m_J         = J;
+		m_dS        = m_Smax / m_J;
+		m_I         = I;
+		m_dt        = m_T / m_I;
+	}
+	
+	double
+	CONV_BONDS::A(double t)
+	{
+		return m_R * exp(-m_kappar * (m_T - t));
+	}
+	
+	double
+	CONV_BONDS::B(double t)
+	{
+		double X_term = 2. * m_X * m_R * exp( - (m_r + 0.5 * m_kappa) * (m_T - t) ) * sinh( 0.5 * m_kappa * (m_T -t) );
+		double C_term = - m_C / m_alphar * exp(m_r * t) * ( exp(-m_alphar * m_T) - exp(-m_alphar * t));
+		return X_term + C_term;
+	}
+	
+	// GENERAL VALUE FUNCTION
+	double
+	CONV_BONDS::V_Smax(double S, double t)
+	{
+		return S * A(t) + B(t);
+	}
+	
+	// VALUE FUNCTION WHEN S = 0
+	double
+	CONV_BONDS::V_S0(double t)
+	{
+		double F_term = m_F * exp( -m_r * (m_T - t) );
+		double C_term = m_C / ( m_r + m_alpha ) * exp( -m_alpha * m_T ) * ( exp(m_alpha * (m_T - t)) - exp(-m_r * (m_T - t)) );
+		return F_term + C_term;
+	}
+	
+	// PDE COEFFICIENTS
+	double
+	CONV_BONDS::aFunc(long i, long j)
+	{
+		double first_term, second_term;
+		double approx_t     = (i + 0.5) * m_dt;
+		first_term   = -0.25 * pow(m_sigma, 2.) * pow(j, 2.* m_beta) * pow(m_dS, 2*(m_beta-1));
+		second_term  =  0.25 * m_kappa * (theta(approx_t) / m_dS - j);
+		return first_term + second_term;
+	}
+	
+	double
+	CONV_BONDS::bFunc(long i, long j)
+	{
+		double long_term = 0.5 * pow(m_sigma, 2.) * pow(j, 2. * m_beta) * pow(m_dS, 2. * (m_beta - 1.));
+		return 1. / m_dt + 0.5 * m_r  + long_term;
+	}
+	
+	double
+	CONV_BONDS::cFunc(long i, long j)
+	{
+		double first_term, second_term;
+		double approx_t     = (i + 0.5) * m_dt;
+		first_term   = -0.25 * pow(m_sigma, 2.) * pow(j, 2.*m_beta) * pow(m_dS, 2. * (m_beta-1.));
+		second_term  = -0.25 * m_kappa * (theta(approx_t) / m_dS - j);
+		return first_term + second_term;
+	}
+	
+	double
+	CONV_BONDS::dFunc(long i, long j, vector<double> &v)
+	{
+		double approx_t = (i + 0.5) * m_dt;
+		double a = aFunc(i, j);
+		double b = bFunc(i, j);
+		double c = cFunc(i, j);
+		double d = - (a * v[j-1] + (b - 2. / m_dt) * v[j] + c * v[j+1]) + m_C * exp(-m_alpha * approx_t);
+		return d;
+	}
+	
+	double
+	CONV_BONDS::theta(double t)
+	{
+		return (1. + m_mu) * m_X * exp(m_mu * t);
+	}
+	
+	// LU COEFFICIENTS
+	double
+	CONV_BONDS::betaFunc(long i, long j, double prevBeta)
+	{
+		return bFunc(i, j) - (aFunc(i, j) * cFunc(i, j-1)) / prevBeta;
+	}
+	double
+	CONV_BONDS::DFunc(long i, long j, double prevBeta, double d, double prevD)
+	{
+		return d - (aFunc(i, j) * prevD) / prevBeta;
+	}
+	double
+	CONV_BONDS::prevV(long i, long j, vector<double> &beta, vector<double> &D, vector<double> &V)
+	{
+		return 1. / beta[j] * (D[j] - cFunc(i, j) * V[j+1]);
+	}
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  GridConstructor.h
+	//  ComputationalFinance
+	//
+	//  Created on 15/4/21.
+	//
+	
+	#include <vector>
+	#define  GRID CGridConstructor
+	
+	using namespace std;
+	
+	class CGridConstructor{
+		public:
+		static vector<double>   setupStockPrices(double dS, long J);
+		static double           boundaryConditions(int j);
+		static double           lagrangeInterpolation(const vector<double>& y,const vector<double>& x, double x0, unsigned int n);
+	};
+\end{lstlisting}
+\begin{lstlisting}
+	//
+	//  GridConstructor.cpp
+	//  ComputationalFinance
+	//
+	//  Created  on 15/4/21.
+	//
+	#include "GridConstructor.h"
+	#include <vector>
+	using namespace std;
+	
+	vector<double>
+	GRID::setupStockPrices(double dS, long J){
+		vector<double> S(J+1);
+		for (int j=0; j<=J; j++){
+			S[j]  = j * dS;
+		}
+		return S;
+	}
+	
+	// A generic llgrange interpolation function
+	double
+	GRID::lagrangeInterpolation(const vector<double>& y,const vector<double>& x,double x0, unsigned int n)
+	{
+		if(x.size()<n)return lagrangeInterpolation(y,x,x0,x.size());
+		if(n==0)throw;
+		int nHalf = n/2;
+		int jStar;
+		double dx=x[1]-x[0];
+		if(n%2==0)
+		jStar = int((x0 - x[0])/dx) -(nHalf-1);
+		else
+		jStar = int((x0 - x[0])/dx+0.5)-(nHalf);
+		jStar= max(0,jStar);
+		jStar= min(int(x.size()-n),jStar);
+		if(n==1)
+		return y[jStar];
+		double temp = 0.;
+		for(unsigned int i=jStar;i<jStar+n;i++){
+			double  int_temp;
+			int_temp = y[i];
+			for(unsigned int j=jStar;j<jStar+n;j++){
+				if(j==i){continue;}
+				int_temp *= ( x0 - x[j] )/( x[i] - x[j] );
+			}
+			temp += int_temp;
+		}
+		// end of interpolate
+		return temp;
+	}
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  Q1.hpp
+	//  assignment2_codes
+	//
+	//  Created on 6/5/21.
+	//
+	
+	#define Q1 CQ1
+	#include <vector>
+	using namespace std;
+	
+	class CQ1
+	{
+		public:
+		CQ1(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double Smax, int J, int I);
+		// Main functions
+		void variousBetas(vector<double> &betas, int method);
+		void variousKappas(vector<double> &kappas, int method);
+		void variousSigmas(vector<double> &sigmas, int method);
+		void increasingS(int I, int J, int iterMax, double gap = 1.1,  double r = 0);
+		void V_fixedS0(double S0, int deg, int timesX, int I, int J);
+		void variousV_fixedS0(double S0, double increment, int nMin, int nMax, int deg, int timesX);
+		private:
+		// Useful Functions
+		// PARAMETERS
+		double m_T;
+		double m_F;
+		double m_R;
+		double m_r;
+		double m_kappa;
+		double m_mu;
+		double m_X;
+		double m_C;
+		double m_alpha;
+		double m_beta;
+		double m_sigma;
+		// AUXILIAR PARAMETERS
+		double m_kappar;
+		double m_alphar;
+		// Local Variables (dS, dt)
+		double m_Smax;
+		double m_dS;
+		double m_dt;
+		// Grid Parameters
+		int    m_J;
+		int    m_I;
+		int    m_jStar;
+	};
+	
+	// To calculate the time
+	#include <chrono>
+	#define  CHRONO   std::chrono
+	#define  SET_TIME CHRONO::system_clock::now()
+	#define  START_TIME CHRONO::system_clock::now()
+	#define  END_TIME CHRONO::system_clock::now()
+	#define  DURATION CHRONO::duration
+	#define  MILLI    std::milli
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  Q1.cpp
+	//  assignment2_codes
+	//
+	//  Created on 6/5/21.
+	//
+	
+	#include "Q1.h"
+	#include <vector>
+	#include <cmath>
+	#include <algorithm>
+	
+	#include "CrankNicolson.h"
+	#include "GeneralFunctions.h"
+	
+	// To keep results
+	#define COMMA << "," <<
+	#define END_LINE << endl;
+	
+	#include <iostream>
+	#include <fstream>
+	using namespace std;
+	
+	Q1::CQ1(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double Smax, int J, int I){
+		m_T         = T;
+		m_F         = F;
+		m_R         = R;
+		m_r         = r;
+		m_kappa     = kappa;
+		m_mu        = mu;
+		m_X         = X;
+		m_C         = C;
+		m_alpha     = alpha;
+		m_beta      = beta;
+		m_sigma     = sigma;
+		m_kappar    = kappa + r;
+		m_alphar    = alpha + r;
+		m_Smax      = Smax;
+		m_J         = J;
+		m_I         = I;
+		m_dS        = m_Smax / J;
+		m_dt        = m_T / I;
+	}
+	
+	void
+	Q1::variousBetas(vector<double> &betas, int method)
+	{
+		ofstream output;
+		string strSigma = AUX::doubleToString(m_sigma);
+		for (auto beta : betas)
+		{
+			string strBeta = AUX::doubleToString(beta);
+			output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_beta" + strBeta + "_sigma" + strSigma + ".csv");
+			output << "F,I,J,S,V,VtoINF" << endl;
+			for (double S = 2; S < m_Smax; S*=1.1)
+			{
+				CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, beta, m_sigma, S, m_Smax, m_J, m_I);
+				crank.eurConvertibleBond(&output, method);
+			}
+			output.close();
+		}
+	}
+	void
+	Q1::variousKappas(vector<double> &kappas, int method)
+	{
+		ofstream output;
+		string strBeta  = AUX::doubleToString(m_beta);
+		string strSigma = AUX::doubleToString(m_sigma);
+		for (auto kappa : kappas)
+		{
+			string strKappa = AUX::doubleToString(kappa);
+			output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_beta" + strBeta + "_kappa" + strKappa + "_sigma" + strSigma + ".csv");
+			output << "F,I,J,S,V,VtoINF" << endl;
+			for (double S = 2; S < m_Smax; S*=1.1)
+			{
+				CN crank(m_T, m_F, m_R, m_r, kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S, m_Smax, m_J, m_I);
+				crank.eurConvertibleBond(&output, method);
+			}
+			output.close();
+		}
+	}
+	
+	void
+	Q1::variousSigmas(vector<double> &sigmas, int method)
+	{
+		ofstream output;
+		string strBeta = AUX::doubleToString(m_beta);
+		for (auto sigma : sigmas)
+		{
+			string strSigma = AUX::doubleToString(sigma);
+			output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_beta" + strBeta + "_sigma" + strSigma + ".csv");
+			output << "F,I,J,S,V,VtoINF" << endl;
+			for (double S = 2; S < m_Smax; S*=1.1)
+			{
+				CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, sigma, S, m_Smax, m_J, m_I);
+				crank.eurConvertibleBond(&output, method);
+			}
+			output.close();
+		}
+	}
+	
+	void
+	Q1::increasingS(int I, int J, int iterMax, double gap,  double r)
+	{
+		if (r == 0)
+		{
+			ofstream output;
+			output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_I" + to_string(I) + "_J" + to_string(J) + "_iterMax" + to_string(iterMax) + "_rho1e8.csv");
+			output << "F,I,J,S,V,VtoINF" << endl;
+			for (double S = 2; S < iterMax; S*=gap)
+			{
+				CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S, m_Smax, J, I);
+				crank.eurConvertibleBond(&output, THOMAS, 2);
+			}
+			output.close();
+		}
+		else
+		{
+			string strR = AUX::doubleToString(r);
+			ofstream output;
+			output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_I" + to_string(I) + "_J" + to_string(J) + "_iterMax" + to_string(iterMax) + "_rho1e8r" + strR + ".csv");
+			output << "F,I,J,S,V,VtoINF" << endl;
+			for (double S = 2; S <= iterMax; S*=gap)
+			{
+				CN crank(m_T, m_F, m_R, r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S, m_Smax, J, I);
+				crank.eurConvertibleBond(&output, THOMAS, 2);
+			}
+			output.close();
+		}
+	}
+	
+	void
+	Q1::variousV_fixedS0(double S0, double incr, int nMin, int nMax, int deg, int timesX)
+	{
+		double Smax = timesX * m_X;
+		ofstream output;
+		string strDeg = to_string(deg);
+		string strSmax= to_string(timesX);
+		output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValues_increasing_iMax_and_jMax_deg" + strDeg + "_Smax" + strSmax + "X.csv");
+		output << "F,I,J,S,V,VtoInf" << endl;
+		for (int n=nMin; n<=nMax; n*=incr)
+		{
+			CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, Smax, n*ceil(Smax/S0), n*ceil(Smax/S0));
+			crank.eurConvertibleBond(&output, THOMAS, deg);
+		}
+	}
+	
+	void
+	Q1::V_fixedS0(double S0, int deg, int timesX, int I, int J)
+	{
+		// Convert the integers into strings to name the document
+		ofstream output;
+		// Open the document in order to keep results
+		string strDeg = to_string(deg);
+		string strSmax= to_string(timesX);
+		output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task1/eurConvBondValue_" + strSmax + "X_deg" + strDeg + "_I" + to_string(I) + "_J" + to_string(J) + "_timing.csv");
+		// First Line of the .csv file to further get columns of data
+		output << "I,J,V,time" END_LINE
+		auto start = START_TIME;
+		// Produce results
+		CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, timesX * m_X, I, J);
+		crank.eurConvertibleBond(&output, THOMAS);
+		double optionValue = crank.GetV();
+		// Keep the time of the end of the Crank Nicolson method
+		auto end = END_TIME;
+		// Duration: end - start
+		DURATION<float> duration = (end - start);
+		output << I COMMA J COMMA optionValue COMMA duration.count() END_LINE
+		cout << "Our result has been obtained in " << duration.count() << "s" << endl;
+	}
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  Q2.hpp
+	//  assignment2_codes
+	//
+	//  Created on 7/5/21.
+	//
+	
+	#define Q2 CQ2
+	#include <vector>
+	using namespace std;
+	
+	class CQ2
+	{
+		public:
+		CQ2(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double Smax, int J, int I);
+		// Main functions
+		void increasingS(int I, int J, int iterMax, double gap = 1.1, double r = 0);
+		void variousInterestRates(vector<double> &rs, int I, int J, int iterMax, double gap = 1.1);
+		void V_fixedS0(double S0, double t0, int deg, int timesX, int I, int J);
+		void variousV_fixedS0(double S0, double t0, double increment, int nMin, int nMax, int deg, int timesX);
+		private:
+		//
+		string doubleToString(double value, bool integer = false);
+		// Useful Functions
+		// PARAMETERS
+		double m_T;
+		double m_F;
+		double m_R;
+		double m_r;
+		double m_kappa;
+		double m_mu;
+		double m_X;
+		double m_C;
+		double m_alpha;
+		double m_beta;
+		double m_sigma;
+		
+		// AUXILIAR PARAMETERS
+		double m_kappar;
+		double m_alphar;
+		// Local Variables (dS, dt)
+		double m_Smax;
+		double m_dS;
+		double m_dt;
+		// Grid Parameters
+		int    m_J;
+		int    m_I;
+		int    m_jStar;
+	};
+	
+	// To calculate the time
+	#include <chrono>
+	#define  CHRONO   std::chrono
+	#define  SET_TIME CHRONO::system_clock::now()
+	#define  START_TIME CHRONO::system_clock::now()
+	#define  END_TIME CHRONO::system_clock::now()
+	#define  DURATION CHRONO::duration
+	#define  MILLI    std::milli
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  Q2.cpp
+	//  assignment2_codes
+	//
+	//  Created on 7/5/21.
+	//
+	
+	#include "Q2.h"
+	#include <vector>
+	#include <cmath>
+	#include <algorithm>
+	
+	#include "CrankNicolson.h"
+	#include "GeneralFunctions.h"
+	
+	// To keep results
+	#define COMMA << "," <<
+	#define END_LINE << endl;
+	
+	#include <iostream>
+	#include <fstream>
+	using namespace std;
+	
+	Q2::CQ2(double T, double F, double R, double r, double kappa, double mu, double X, double C, double alpha, double beta, double sigma, double Smax, int J, int I){
+		m_T         = T;
+		m_F         = F;
+		m_R         = R;
+		m_r         = r;
+		m_kappa     = kappa;
+		m_mu        = mu;
+		m_X         = X;
+		m_C         = C;
+		m_alpha     = alpha;
+		m_beta      = beta;
+		m_sigma     = sigma;
+		m_kappar    = kappa + r;
+		m_alphar    = alpha + r;
+		m_Smax  = Smax;
+		m_J     = J;
+		m_I     = I;
+		m_dS    = m_Smax / J;
+		m_dt    = m_T / I;
+	}
+	
+	void
+	Q2::increasingS(int I, int J, int iterMax, double gap, double r)
+	{
+		if (r == 0)
+		{
+			ofstream output;
+			output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task2/amConvBondValues_I" + to_string(I) + "_J" + to_string(J) + "_iterMax" + to_string(iterMax) + "_rho1e8.csv");
+			output << "F,I,J,S,V,VtoINF" << endl;
+			for (double S = 2; S < iterMax; S*=gap)
+			{
+				CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S, m_Smax, I, J);
+				crank.amConvertibleBond_penalty(&output,2);
+			}
+			output.close();
+		}
+		else
+		{
+			string strR = AUX::doubleToString(r);
+			ofstream output;
+			output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task2/amConvBondValues_I" + to_string(I) + "_J" + to_string(J) + "_iterMax" + to_string(iterMax) + "_rho1e8r" + strR + ".csv");
+			output << "F,I,J,S,V,VtoINF" << endl;
+			for (double S = 2; S < iterMax; S*=gap)
+			{
+				CN crank(m_T, m_F, m_R, r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S, m_Smax, I, J);
+				crank.amConvertibleBond_penalty(&output, 2);
+			}
+			output.close();
+		}
+	}
+	
+	void
+	Q2::variousInterestRates(vector<double> &rs, int I, int J, int iterMax, double gap)
+	{
+		for (auto r : rs)increasingS(I, J, iterMax, gap, r);
+	}
+	
+	void
+	Q2::variousV_fixedS0(double S0, double t0, double increment, int nMin, int nMax, int deg, int timesX)
+	{
+		double Smax = timesX * m_X;
+		ofstream output;
+		// Convert the integers into strings to name the document
+		string strDeg = to_string(deg);
+		string strSmax= to_string(timesX);
+		// Open the document in order to keep results
+		output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task2/amConvBondValues_increasing_iMax_and_jMax_deg" + strDeg + "_Smax" + strSmax + "X.csv");
+		// First Line of the .csv file to further get columns of data
+		output << "F,I,J,S,V,VtoInf" << endl;
+		// Iteration on the size of the grid. I and J are conveniently chosen in order to have S0 and t0 on the grid
+		// or close to the grid.
+		for (int n=nMin; n<=nMax; n*=increment)
+		{
+			// Produce and keep results
+			CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, Smax, n * ceil(Smax / S0), n * ceil(m_T / t0));
+			crank.amConvertibleBond_penalty(&output, deg);
+		}
+	}
+	
+	void
+	Q2::V_fixedS0(double S0, double t0, int deg, int timesX, int I, int J)
+	{
+		// Convert the integers into strings to name the document
+		ofstream output;
+		// Open the document in order to keep results
+		string strDeg = to_string(deg);
+		string strSmax= to_string(timesX);
+		output.open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/task2/amConvBondValue_" + strSmax + "X_deg" + strDeg + "_I" + to_string(I) + "_J" + to_string(J) + "_timing.csv");
+		// First Line of the .csv file to further get columns of data
+		output << "I,J,V,time" << endl;
+		// Keep the time of inisiation of the Crank Nicolson method
+		auto start = START_TIME;
+		// Produce results
+		CN crank(m_T, m_F, m_R, m_r, m_kappa, m_mu, m_X, m_C, m_alpha, m_beta, m_sigma, S0, timesX * m_X, I, J);
+		crank.amConvertibleBond_penalty(&output, deg, DONT_SAVE);
+		double optionValue = crank.GetV();
+		// Keep the time of the end of the Crank Nicolson method
+		auto end = END_TIME;
+		// Duration: end - start
+		DURATION<float> duration = (end - start);
+		output << I COMMA J COMMA optionValue COMMA duration.count() END_LINE
+		cout << "Our result has been obtained in " << duration.count() << "s" << endl;
+	}
+\end{lstlisting}
+\subsubsection{\texttt{aux}}
+
+\begin{lstlisting}
+	//
+	//  PrintMacros.h
+	//  ComputationalFinance
+	//
+	//  Created  on 24/4/21.
+	//
+	
+	#include <iostream>
+	#include <fstream>
+	#include <limits>
+	using namespace std;
+	
+	#define COMMA               << ", ";
+	#define START_LINE          cout <<
+	#define END_LINE            << endl;
+	#define OUTPUT              output <<
+	
+	#define END_PRINTING(a)     START_LINE (a) END_LINE
+	#define PRINT(a)            START_LINE (a) COMMA
+	
+	#define END_WRITING(a)      OUTPUT (a) END_LINE
+	#define WRITE(a)            OUTPUT fixed << setprecision(10) << (a) COMMA
+	
+	/// CONSOLE
+	// RECURSION FOR PRINTING RESULTS IN THE CONSOLE: WE FIRSTLY DECLARE THE "LAST STATE" IN THE
+	// RECURSION, I.E., WHEN THERE'S ONLY ONE ARGUMENT LEFT TO PRINTING.
+	// THE SECOND TEMPLATE DOES THE REST.
+	
+	template<typename T>                    // Type is resolved in compile time
+	void PRINT_DATA_LINE(T t)
+	{
+		END_PRINTING(t)
+	}
+	
+	template<typename T, typename... ARGS>
+	void PRINT_DATA_LINE(T t, ARGS... args) // Take the first arguments
+	{
+		PRINT(t)
+		PRINT_DATA_LINE(args...);           // Recursion with a fewer argument
+	}
+	
+	/// CSV
+	// (SAME PROCEDURE THAN BEFORE)
+	template<typename T>
+	void DATA_LINE(ofstream *output, T t)
+	{
+		*END_WRITING(t)
+	}
+	
+	template<typename T, typename... ARGS>
+	void DATA_LINE(ofstream *output, T t, ARGS... args)
+	{
+		*WRITE(t)
+		DATA_LINE(output, args...);
+	}
+	
+	void OpenCSVFile(ofstream *output, string name, bool over_write){
+		// open up a file stream to write data
+		if (over_write == true)
+		(*output).open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/" + name + ".csv");
+		if (over_write == false)
+		(*output).open("/Users/rubenexojo/Library/Mobile Documents/com~apple~CloudDocs/MSc Mathematical Finance - Manchester/subjects/II_semester/MATH60082_computational_finance/c++/assignment2/data/" + name + ".csv", fstream::app);
+		// check if the file is opened
+		if (!(*output).is_open()){
+			PRINT_DATA_LINE(" File not opened");
+			// stop here
+			throw;
+		}
+	}
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  GeneralFunctions.h
+	//  ComputationalFinance
+	//
+	//  Created on 14/4/21.
+	//
+	
+	#include <vector>
+	
+	#define  AUX CGeneralFunctions
+	
+	using namespace std;
+	
+	class CGeneralFunctions{
+		public:
+		static double discountFactor(double interest_rate, double time);
+		static double maxFunc(double x, double y);
+		static double minFunc(double x, double y);
+		static double lagInterp(double S, vector<double> p1, vector<double> p2);
+		static string doubleToString(double value);
+		static void   extrap(double S1, double S2, double p);
+	};
+	
+	// To calculate the time
+	#include <chrono>
+	#define  CHRONO   std::chrono
+	#define  SET_TIME CHRONO::system_clock::now()
+	#define  START_TIME CHRONO::system_clock::now()
+	#define  END_TIME CHRONO::system_clock::now()
+	#define  DURATION CHRONO::duration
+	#define  MILLI    std::milli
+\end{lstlisting}
+
+\begin{lstlisting}
+	//
+	//  GeneralFunctions.cpp
+	//  ComputationalFinance
+	//
+	//  Created on 14/4/21.
+	//
+	
+	#include "GeneralFunctions.h"
+	#define  AUX CGeneralFunctions
+	#define COMMA << "," <<
+	#define END_LINE << endl;
+	
+	
+	#include <cmath>
+	#include <vector>
+	#include <iostream>
+	#include <fstream>
+	using namespace std;
+	
+	double
+	AUX::discountFactor(double interest_rate, double time)
+	{
+		return exp(- interest_rate * time);
+	}
+	double
+	AUX::maxFunc(double x, double y)
+	{
+		if (x <= y)
+		return y;
+		else
+		return x;
+	}
+	double
+	AUX::minFunc(double x, double y)
+	{
+		if (x <= y)
+		return x;
+		else
+		return y;
+	}
+	double
+	AUX::lagInterp(double S, vector<double> p1, vector<double> p2)
+	{
+		double approxJ        = (S - p2[0]) / (p1[0] - p2[0]) * p1[1];
+		double approxJplus1   = (S - p1[0]) / (p2[0] - p1[0]) * p2[1];
+		return approxJ + approxJplus1;
+	}
+	string
+	AUX::doubleToString(double value)
+	{
+		string str = to_string(value);
+		if (value < 10)
+		// erase the comma of a number lower than 10
+		str = str.erase(1,1);
+		if (value > 10 && value < 100)
+		// erase the comma of a number greater than 10
+		str = str.erase(2,2);
+		// 4-5 decimals
+		str = str.erase(5);
+		return str;
+	}
+	
+	void
+	AUX::extrap(double S1, double S2, double p)
+	{
+		auto start = START_TIME;
+		double extrapValue = (pow(2,p)*S2 - S1) / (pow(2,p) - 1);
+		auto end   = END_TIME;
+		DURATION<float> duration = (end - start);
+		cout << extrapValue COMMA duration.count() END_LINE;
+	}
+\end{lstlisting}
